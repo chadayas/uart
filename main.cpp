@@ -83,38 +83,33 @@ void open_USART_config(){
 	// enable USART	
 	*USART2_CR1 |= (1 << 13);
 
+	// setting baud rate at 115200	
+	*USART2_BRR = (8 << 4) | 11; 
 };
 
 void start_transmission(){
-	// setting baud rate at 115200	
-	*USART2_BRR = (8 << 4) | 11; 
 	
 	// enable the transmitter
 	*USART2_CR1 |= (1 << 3); 
-	// send T over transmission, T for true	
-	*USART2_DR = 'T';
 
 	// wait untill hardware sets TXE bit to 1 indicating 
 	// DR is empty, then fill with our char T
-	while(!(*USART2_SR & (1 << 7))) 
-		*USART2_DR = 'T';
+	while(!(*USART2_SR & (1 << 7))); 
+	*USART2_DR = 'T';
 
 
 }
 
 void start_recieve(){
-	// setting baud rate at 115200	
-	*USART2_BRR = (8 << 4) | 11; 
-	
-	// enable the recieve 
+	// RE bit enabled, search for start bit
 	*USART2_CR1 |= (1 << 2); 
-	while(!(*USART2_SR & (1 << 5)))
-		uint8_t buf = *USART2_DR;
 
-	*USART2_CR1 |= (1 << 2);
+	while(!(*USART2_SR & (1 << 5)));
+	uint8_t buf = *USART2_DR;
 }
 
 int main()
 {
-
+	open_UART_config();
+	start_transmission();
 }
