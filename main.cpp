@@ -41,6 +41,19 @@ bit.
 */
 
 // PA2 controls the UART_TX
+
 #include<cstdint>
 
 #define USART_CR1 reinterpret_cast<volatile uint32_t>(0x00)
+#define RCC 0x40023800
+#define GPIOA_BASE 0x40020000
+#define GPIOA_MODER reinterpret_cast<volatile uint32_t*>(GPIOA_BASE + 0x00)
+#define RCC_AHB1ENR reinterpret_cast<volatile uint32_t*>(RCC + 0x30)
+
+
+int main()
+{
+        *RCC_AHB1ENR |= (1 << 0);
+        *GPIOA_MODER |= (1 << 10);
+
+}
