@@ -44,29 +44,36 @@ bit.
 
 #include<cstdint>
 
+#define BAUD_RATE 115200
 #define USART2 0x40004400 
 #define RCC 0x40023800
 #define GPIOA_BASE 0x40020000
 #define GPIOA_MODER reinterpret_cast<volatile uint32_t*>(GPIOA_BASE + 0x00)
 #define RCC_AHB1ENR reinterpret_cast<volatile uint32_t*>(RCC + 0x30)
+#define RCC_APB1ENR reinterpret_cast<volatile uint32_t*>(RCC + 0x30)
 #define GPIOA_AFRL reinterpret_cast<volatile uint32_t*>(GPIOA_BASE + 0x20)
 #define USART2_CR1 reinterpret_cast<volatile uint32_t*>(USART2 + 0x0c)
-#define USART2_CR1 reinterpret_cast<volatile uint32_t*>(USART2 + 0x0c)
+#define USART2_CR2 reinterpret_cast<volatile uint32_t*>(USART2 + 0x10)
+#define USART2_BRR reinterpret_cast<volatile uint32_t*>(USART2 + 0x08)
 
 void open_USART_config(){
+	// enable clock for bus for GPIOA and USART2	
 	*RCC_AHB1ENR |= (1 << 0);
-        *GPIOA_MODER |= (1 << 5);
-        
+       	*RCC_APB1ENR |= (1 << 17);
+	// change mode to alternate function	
+	*GPIOA_MODER |= (1 << 5);
+       // alternate function selection for USART2_TX  
 	*GPIOA_AFRL |= (1 << 10); 
 	*GPIOA_AFRL |= (1 << 9); 
 	*GPIOA_AFRL |= (1 << 8);
+
 };
 
 void start_transmission(){
 	*USART2_CR1 |= (1 << 13);
 	*USART2_CR1 |= (1 << 12);
 	
-
+	*USART2_BRR  
 }
 
 
