@@ -44,16 +44,23 @@ bit.
 
 #include<cstdint>
 
-#define USART_CR1 reinterpret_cast<volatile uint32_t>(0x00)
+#define USART2 0x40004400 
 #define RCC 0x40023800
 #define GPIOA_BASE 0x40020000
 #define GPIOA_MODER reinterpret_cast<volatile uint32_t*>(GPIOA_BASE + 0x00)
 #define RCC_AHB1ENR reinterpret_cast<volatile uint32_t*>(RCC + 0x30)
-
+#define GPIOA_AFRL reinterpret_cast<volatile uint32_t*>(GPIOA_BASE + 0x20)
+#define USART2_CR1 reinterpret_cast<volatile uint32_t*>(GPIOA_BASE + 0x00)
 
 int main()
 {
         *RCC_AHB1ENR |= (1 << 0);
-        *GPIOA_MODER |= (1 << 10);
+        *GPIOA_MODER |= (1 << 5);
+        
+	*GPIOA_AFRL |= (1 << 10); 
+	*GPIOA_AFRL |= (1 << 9); 
+	*GPIOA_AFRL |= (1 << 8);
+
+
 
 }
