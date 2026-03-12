@@ -44,38 +44,74 @@ bit.
 
 #include<cstdint>
 
-#define BAUD_RATE 115200
 #define USART2 0x40004400 
 #define RCC 0x40023800
 #define GPIOA_BASE 0x40020000
 #define GPIOA_MODER reinterpret_cast<volatile uint32_t*>(GPIOA_BASE + 0x00)
+
 #define RCC_AHB1ENR reinterpret_cast<volatile uint32_t*>(RCC + 0x30)
 #define RCC_APB1ENR reinterpret_cast<volatile uint32_t*>(RCC + 0x30)
+
 #define GPIOA_AFRL reinterpret_cast<volatile uint32_t*>(GPIOA_BASE + 0x20)
+
+#define USART2_SR reinterpret_cast<volatile uint32_t*>(USART2 + 0x00)
 #define USART2_CR1 reinterpret_cast<volatile uint32_t*>(USART2 + 0x0c)
 #define USART2_CR2 reinterpret_cast<volatile uint32_t*>(USART2 + 0x10)
 #define USART2_BRR reinterpret_cast<volatile uint32_t*>(USART2 + 0x08)
+#define USART2_DR reinterpret_cast<volatile uint32_t*>(USART2 + 0x04)
 
 void open_USART_config(){
 	// enable clock for bus for GPIOA and USART2	
 	*RCC_AHB1ENR |= (1 << 0);
        	*RCC_APB1ENR |= (1 << 17);
-	// change mode to alternate function	
+	// change mode to alternate function for PA2	
 	*GPIOA_MODER |= (1 << 5);
-       // alternate function selection for USART2_TX  
+       // change mode to alternate function for PA3	
+	*GPIOA_MODER |= (1 << 7);
+       
+
+	// alternate function selection for USART2_TX  
 	*GPIOA_AFRL |= (1 << 10); 
 	*GPIOA_AFRL |= (1 << 9); 
 	*GPIOA_AFRL |= (1 << 8);
 
+	// alternate function selection for USART2_RX  
+	*GPIOA_AFRL |= (1 << 14); 
+	*GPIOA_AFRL |= (1 << 13); 
+	*GPIOA_AFRL |= (1 << 12);
+
+
 };
 
 void start_transmission(){
+	// enable USART	
 	*USART2_CR1 |= (1 << 13);
 	*USART2_CR1 |= (1 << 12);
 	
-	*USART2_BRR  
+	// setting baud rate at 115200	
+	*USART2_BRR = (8 << 4) | 11; 
+	
+	// enable the transmitter
+	*USART2_CR1 |= (1 << 3); 
+	// send T over transmission, T for true	
+	*USART2_DR = 'T';
+
 }
 
+void start_recieve(){
+	// enable USART	
+	*USART2_CR1 |= (1 << 13);
+	*USART2_CR1 |= (1 << 12);
+	
+	// setting baud rate at 115200	
+	*USART2_BRR = (8 << 4) | 11; 
+	
+	// enable the transmitter
+	*USART2_CR1 |= (1 << 3); 
+	// send T over transmission, T for true	
+	*USART2_DR = 'T';
+
+}
 
 int main()
 {
