@@ -50,17 +50,27 @@ bit.
 #define GPIOA_MODER reinterpret_cast<volatile uint32_t*>(GPIOA_BASE + 0x00)
 #define RCC_AHB1ENR reinterpret_cast<volatile uint32_t*>(RCC + 0x30)
 #define GPIOA_AFRL reinterpret_cast<volatile uint32_t*>(GPIOA_BASE + 0x20)
-#define USART2_CR1 reinterpret_cast<volatile uint32_t*>(GPIOA_BASE + 0x00)
+#define USART2_CR1 reinterpret_cast<volatile uint32_t*>(USART2 + 0x0c)
+#define USART2_CR1 reinterpret_cast<volatile uint32_t*>(USART2 + 0x0c)
 
-int main()
-{
-        *RCC_AHB1ENR |= (1 << 0);
+void open_USART_config(){
+	*RCC_AHB1ENR |= (1 << 0);
         *GPIOA_MODER |= (1 << 5);
         
 	*GPIOA_AFRL |= (1 << 10); 
 	*GPIOA_AFRL |= (1 << 9); 
 	*GPIOA_AFRL |= (1 << 8);
+};
+
+void start_transmission(){
+	*USART2_CR1 |= (1 << 13);
+	*USART2_CR1 |= (1 << 12);
+	
+
+}
 
 
+int main()
+{
 
 }
