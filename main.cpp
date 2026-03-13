@@ -110,6 +110,6 @@ void start_recieve(){
 
 int main()
 {
-	open_UART_config();
+	open_USART_config();
 	start_transmission();
 }
