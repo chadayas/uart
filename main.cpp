@@ -50,7 +50,7 @@ bit.
 #define GPIOA_MODER reinterpret_cast<volatile uint32_t*>(GPIOA_BASE + 0x00)
 
 #define RCC_AHB1ENR reinterpret_cast<volatile uint32_t*>(RCC + 0x30)
-#define RCC_APB1ENR reinterpret_cast<volatile uint32_t*>(RCC + 0x30)
+#define RCC_APB1ENR reinterpret_cast<volatile uint32_t*>(RCC + 0x40)
 
 #define GPIOA_AFRL reinterpret_cast<volatile uint32_t*>(GPIOA_BASE + 0x20)
 
@@ -80,15 +80,15 @@ void open_USART_config(){
 	*GPIOA_AFRL |= (1 << 13); 
 	*GPIOA_AFRL |= (1 << 12);
 
-	// enable USART	
-	*USART2_CR1 |= (1 << 13);
+	// setting baud rate at 115200
+	*USART2_BRR = (8 << 4) | 11;
 
-	// setting baud rate at 115200	
-	*USART2_BRR = (8 << 4) | 11; 
+	// enable USART
+	*USART2_CR1 |= (1 << 13);
 };
 
 void start_transmission(){
-	
+
 	// enable the transmitter
 	*USART2_CR1 |= (1 << 3); 
 

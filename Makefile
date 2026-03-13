@@ -4,6 +4,7 @@ LD = arm-none-eabi-ld
 OBJCOPY = arm-none-eabi-objcopy
 
 GCC_FLAGS = -nostdlib -mcpu=cortex-m4 -mthumb -fno-exceptions -fno-rtti
+C_FLAGS = -nostdlib -mcpu=cortex-m4 -mthumb 
 
 SRC = main.cpp
 STUB = include/stub.c
@@ -16,7 +17,7 @@ main.o: $(SRC)
 	$(CC) -c $(GCC_FLAGS) $(SRC) -o main.o
 
 stub.o: $(STUB)
-	$(CC) -c $(GCC_FLAGS) $(STUB) -o stub.o
+	$(CC) -c $(C_FLAGS) $(STUB) -o stub.o
 
 startup.o: $(STARTUP)
 	arm-none-eabi-as -mcpu=cortex-m4 -mthumb $(STARTUP) -o startup.o

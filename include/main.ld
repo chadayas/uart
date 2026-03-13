@@ -1,6 +1,6 @@
 
 
-INPUT(main.o starup.o stub.o)
+INPUT(main.o startup.o stub.o)
 
 MEMORY {
 
