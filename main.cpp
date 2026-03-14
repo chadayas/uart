@@ -50,10 +50,13 @@ void start_transmission(){
 	*USART2_CR1 |= (1 << 3); 
 
 	// wait untill hardware sets TXE bit to 1 indicating 
-	// DR is empty, then fill with our char T
-	while(!(*USART2_SR & (1 << 7))); 
-	*USART2_DR = 'T';
-
+	// DR is empty, then fill with our char x
+	// loop through char array for send	
+	const char text[] = "\n SLATT SLATT SLATT";	
+	for(auto& x : text ){	
+		while(!(*USART2_SR & (1 << 7))); 
+		*USART2_DR = x;
+	}
 
 }
 
