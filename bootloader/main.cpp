@@ -101,12 +101,56 @@ void flash_init(){
 
 }
 void flash_erase(){
+	// wait for any ongoing flash mem operations
+	while(*FLASH_SR & (1 << 16));
 
+	// activate sector erase
+	*FLASH_CR |= (1 << 1);
+
+	// erase sectors 2-7, set SNB bits [6:3] per sector number in binary
+	// sector 2 = 0010
+	*FLASH_CR &= ~(0xF << 3);
+	*FLASH_CR |= (1 << 4);
+	*FLASH_CR |= (1 << 16);
+	while(*FLASH_SR & (1 << 16));
+
+	// sector 3 = 0011
+	*FLASH_CR &= ~(0xF << 3);
+	*FLASH_CR |= (1 << 4) | (1 << 3);
+	*FLASH_CR |= (1 << 16);
+	while(*FLASH_SR & (1 << 16));
+
+	// sector 4 = 0100
+	*FLASH_CR &= ~(0xF << 3);
+	*FLASH_CR |= (1 << 5);
+	*FLASH_CR |= (1 << 16);
+	while(*FLASH_SR & (1 << 16));
+
+	// sector 5 = 0101
+	*FLASH_CR &= ~(0xF << 3);
+	*FLASH_CR |= (1 << 5) | (1 << 3);
+	*FLASH_CR |= (1 << 16);
+	while(*FLASH_SR & (1 << 16));
+
+	// sector 6 = 0110
+	*FLASH_CR &= ~(0xF << 3);
+	*FLASH_CR |= (1 << 5) | (1 << 4);
+	*FLASH_CR |= (1 << 16);
+	while(*FLASH_SR & (1 << 16));
+
+	// sector 7 = 0111
+	*FLASH_CR &= ~(0xF << 3);
+	*FLASH_CR |= (1 << 5) | (1 << 4) | (1 << 3);
+	*FLASH_CR |= (1 << 16);
+	while(*FLASH_SR & (1 << 16));
+
+	// clear SER bit
+	*FLASH_CR &= ~(1 << 1);
 }
 
 void flash_write(){
-
 }
+
 int main()
 {
 	open_USART_config();
