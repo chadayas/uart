@@ -100,59 +100,69 @@ void flash_init(){
 	*FLASH_CR |= (1 << 9);
 
 }
-inline void flash_operation_check(){
+inline void flash_bsy_wait(){
 	while(*FLASH_SR & (1 << 16));
 }
 
 void flash_erase(){
 	// wait for any ongoing flash mem operations
-	flash_operation_check();
+	flash_bsy_wait();
 	// activate sector erase
 	*FLASH_CR |= (1 << 1);
 
 	// erase sectors 2-7, set SNB bits [6:3] per sector number in binary
 	// sector 2 = 0010
+	flash_bsy_wait();
 	*FLASH_CR &= ~(0xF << 3);
 	*FLASH_CR |= (1 << 4);
 	*FLASH_CR |= (1 << 16);
-	flash_operation_check();
+	flash_bsy_wait();
 
 	// sector 3 = 0011
+	flash_bsy_wait();
 	*FLASH_CR &= ~(0xF << 3);
 	*FLASH_CR |= (1 << 4) | (1 << 3);
 	*FLASH_CR |= (1 << 16);
-	flash_operation_check();
+	flash_bsy_wait();
 
 	// sector 4 = 0100
+	flash_bsy_wait();
 	*FLASH_CR &= ~(0xF << 3);
 	*FLASH_CR |= (1 << 5);
 	*FLASH_CR |= (1 << 16);
-	flash_operation_check();
+	flash_bsy_wait();
 
 	// sector 5 = 0101
+	flash_bsy_wait();
 	*FLASH_CR &= ~(0xF << 3);
 	*FLASH_CR |= (1 << 5) | (1 << 3);
 	*FLASH_CR |= (1 << 16);
-	flash_operation_check();
+	flash_bsy_wait();
 
 	// sector 6 = 0110
+	flash_bsy_wait();
 	*FLASH_CR &= ~(0xF << 3);
 	*FLASH_CR |= (1 << 5) | (1 << 4);
 	*FLASH_CR |= (1 << 16);
-	flash_operation_check();
+	flash_bsy_wait();
 
 	// sector 7 = 0111
+	flash_bsy_wait();
 	*FLASH_CR &= ~(0xF << 3);
 	*FLASH_CR |= (1 << 5) | (1 << 4) | (1 << 3);
 	*FLASH_CR |= (1 << 16);
-	flash_operation_check();
+	flash_bsy_wait();
 
 	// clear SER bit
 	*FLASH_CR &= ~(1 << 1);
 }
 
 void flash_write(){
+	uart_send_string("BOOT: Erasing flash from 0x08008000 to 0x0807FFFF\n")
+	flash_erase();
+	uart_send_string("BOOT: flash erased")	
 }
+
 
 int main()
 {
