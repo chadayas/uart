@@ -82,6 +82,10 @@ void start_recieve(){
 	uint8_t buf = *USART2_DR;
 }
 
+void sector_erase(){
+
+}
+
 void flash_init(){
 	// values must be programmed into the 
 	// KEYR register to unlock the CR register
@@ -93,9 +97,16 @@ void flash_init(){
 	*FLASH_KEYR = KEY2;
 	// setting PISZE for our boards voltage range (3.3V)
 	// choosing words for PSIZE (32-bit)
-	*FLASH_CR |= (2 << 8);
+	*FLASH_CR |= (1 << 9);
+
+}
+void flash_erase(){
+
 }
 
+void flash_write(){
+
+}
 int main()
 {
 	open_USART_config();
