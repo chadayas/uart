@@ -100,10 +100,13 @@ void flash_init(){
 	*FLASH_CR |= (1 << 9);
 
 }
+inline void flash_operation_check(){
+	while(*FLASH_SR & (1 << 16));
+}
+
 void flash_erase(){
 	// wait for any ongoing flash mem operations
-	while(*FLASH_SR & (1 << 16));
-
+	flash_operation_check();
 	// activate sector erase
 	*FLASH_CR |= (1 << 1);
 
@@ -112,37 +115,37 @@ void flash_erase(){
 	*FLASH_CR &= ~(0xF << 3);
 	*FLASH_CR |= (1 << 4);
 	*FLASH_CR |= (1 << 16);
-	while(*FLASH_SR & (1 << 16));
+	flash_operation_check();
 
 	// sector 3 = 0011
 	*FLASH_CR &= ~(0xF << 3);
 	*FLASH_CR |= (1 << 4) | (1 << 3);
 	*FLASH_CR |= (1 << 16);
-	while(*FLASH_SR & (1 << 16));
+	flash_operation_check();
 
 	// sector 4 = 0100
 	*FLASH_CR &= ~(0xF << 3);
 	*FLASH_CR |= (1 << 5);
 	*FLASH_CR |= (1 << 16);
-	while(*FLASH_SR & (1 << 16));
+	flash_operation_check();
 
 	// sector 5 = 0101
 	*FLASH_CR &= ~(0xF << 3);
 	*FLASH_CR |= (1 << 5) | (1 << 3);
 	*FLASH_CR |= (1 << 16);
-	while(*FLASH_SR & (1 << 16));
+	flash_operation_check();
 
 	// sector 6 = 0110
 	*FLASH_CR &= ~(0xF << 3);
 	*FLASH_CR |= (1 << 5) | (1 << 4);
 	*FLASH_CR |= (1 << 16);
-	while(*FLASH_SR & (1 << 16));
+	flash_operation_check();
 
 	// sector 7 = 0111
 	*FLASH_CR &= ~(0xF << 3);
 	*FLASH_CR |= (1 << 5) | (1 << 4) | (1 << 3);
 	*FLASH_CR |= (1 << 16);
-	while(*FLASH_SR & (1 << 16));
+	flash_operation_check();
 
 	// clear SER bit
 	*FLASH_CR &= ~(1 << 1);
