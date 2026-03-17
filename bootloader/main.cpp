@@ -25,13 +25,21 @@
 
 
 
+inline void transmit_reg_empty_check(){
+	while(!(*USART2_SR & (1 << 7)));
+}
+
+inline void read_reg_empty_check(){
+	while(!(*USART2_SR & (1 << 5)));
+}
+
 void uart_send_string(const char* msg){
-	while(*msg){	
-		while(!(*USART2_SR & (1 << 7))); 
+	while(*msg){
+		transmit_reg_empty_check();
 		*USART2_DR = *msg++;
 	}
-
 }
+
 
 void open_USART_config(){
 	// enable clock for bus for GPIOA and USART2	
@@ -78,13 +86,10 @@ void start_recieve(){
 	// RE bit enabled, search for start bit
 	*USART2_CR1 |= (1 << 2); 
 
-	while(!(*USART2_SR & (1 << 5)));
-	uint8_t buf = *USART2_DR;
+	read_reg_empty_check();
+	uint32_t buf = *USART2_DR;
 }
 
-void sector_erase(){
-
-}
 
 void flash_init(){
 	// values must be programmed into the 
@@ -95,9 +100,9 @@ void flash_init(){
 	// consecutive writing	
 	*FLASH_KEYR = KEY1;
 	*FLASH_KEYR = KEY2;
-	// setting PISZE for our boards voltage range (3.3V)
-	// choosing words for PSIZE (32-bit)
-	*FLASH_CR |= (1 << 9);
+	// setting PSIZE for our boards voltage range (3.3V)
+	// choosing bytes for PSIZE (8-bit)
+	*FLASH_CR &= ~(3 << 8);
 
 }
 inline void flash_bsy_wait(){
@@ -157,10 +162,28 @@ void flash_erase(){
 	*FLASH_CR &= ~(1 << 1);
 }
 
-void flash_write(){
-	uart_send_string("BOOT: Erasing flash from 0x08008000 to 0x0807FFFF\n")
+void flash_write(uint8_t* dest, uint32_t len){
+	uart_send_string("BOOT: Erasing flash from 0x08008000 to 0x0807FFFF\n");
 	flash_erase();
-	uart_send_string("BOOT: flash erased")	
+	uart_send_string("BOOT: flash erased\n");	
+		
+	flash_bsy_wait();
+	// enable flash programming
+	*FLASH_CR |= (1 << 0);
+
+	for(uint32_t i = 0; i < len; i++){
+		flash_bsy_wait();
+		// receive byte over UART
+		read_reg_empty_check();
+		uint32_t byte = *USART2_DR;
+		// write byte to flash
+		*dest++ = byte;
+		flash_bsy_wait();
+	}
+
+	// clear PG bit
+	*FLASH_CR &= ~(1 << 0);
+	uart_send_string("BOOT: flash write complete\n");
 }
 
 
