@@ -3,10 +3,10 @@ CC = arm-none-eabi-gcc
 LD = arm-none-eabi-ld
 OBJCOPY = arm-none-eabi-objcopy
 
-GCC_FLAGS = -nostdlib -mcpu=cortex-m4 -mthumb -fno-exceptions -fno-rtti
-C_FLAGS = -nostdlib -mcpu=cortex-m4 -mthumb 
+GCC_FLAGS = -nostdlib -mcpu=cortex-m4 -mthumb -fno-exceptions -fno-rtti -O1
+C_FLAGS = -nostdlib -mcpu=cortex-m4 -mthumb -O1
 
-SRC = main.cpp
+SRC = bootloader/main.cpp
 STUB = include/stub.c
 STARTUP = include/startup.s
 LINK_SRC = include/main.ld

@@ -33,6 +33,10 @@ inline void read_reg_empty_check(){
 	while(!(*USART2_SR & (1 << 5)));
 }
 
+inline void flash_bsy_wait(){
+	while(*FLASH_SR & (1 << 16));
+}
+
 void uart_send_string(const char* msg){
 	while(*msg){
 		transmit_reg_empty_check();
@@ -105,9 +109,6 @@ void flash_init(){
 	*FLASH_CR &= ~(3 << 8);
 
 }
-inline void flash_bsy_wait(){
-	while(*FLASH_SR & (1 << 16));
-}
 
 void flash_erase(){
 	// wait for any ongoing flash mem operations
@@ -162,11 +163,13 @@ void flash_erase(){
 	*FLASH_CR &= ~(1 << 1);
 }
 
-void flash_write(uint8_t* dest, uint32_t len){
+void flash_write(uint32_t dest, uint32_t len){
+	uint8_t* ptr = reinterpret_cast<uint8_t*>(dest);
+
 	uart_send_string("BOOT: Erasing flash from 0x08008000 to 0x0807FFFF\n");
 	flash_erase();
-	uart_send_string("BOOT: flash erased\n");	
-		
+	uart_send_string("BOOT: flash erased\n");
+
 	flash_bsy_wait();
 	// enable flash programming
 	*FLASH_CR |= (1 << 0);
@@ -175,9 +178,9 @@ void flash_write(uint8_t* dest, uint32_t len){
 		flash_bsy_wait();
 		// receive byte over UART
 		read_reg_empty_check();
-		uint32_t byte = *USART2_DR;
+		uint8_t byte = *USART2_DR;
 		// write byte to flash
-		*dest++ = byte;
+		*ptr++ = byte;
 		flash_bsy_wait();
 	}
 
@@ -191,4 +194,6 @@ int main()
 {
 	open_USART_config();
 	start_transmission();
+
+
 }
