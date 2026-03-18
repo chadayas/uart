@@ -81,25 +81,11 @@ void start_transmission(){
 	// DR is empty, then fill with our char x
 	// loop through char array for send	
 	
-	const char text[] = "\n SLATT SLATT SLATT";	
+	const char text[] = "\n TEST";	
 	uart_send_string(text);	
 
 }
 
-void start_recieve(){
-	// RE bit enabled, search for start bit
-	*USART2_CR1 |= (1 << 2);
-
-	// receive firmware size (4 bytes, little endian)
-	uint32_t len = 0;
-	for(int i = 0; i < 4; i++){
-		read_reg_empty_check();
-		len |= (*USART2_DR << (i * 8));
-	}
-
-	// receive firmware and write to flash
-	flash_write(0x08008000, len);
-}
 
 
 void flash_init(){
@@ -195,6 +181,24 @@ void flash_write(uint32_t dest, uint32_t len){
 	*FLASH_CR &= ~(1 << 0);
 	uart_send_string("BOOT: flash write complete\n");
 }
+
+void start_recieve(){
+	// RE bit enabled, search for start bit
+	*USART2_CR1 |= (1 << 2);
+
+	// receive firmware size (4 bytes, little endian)
+	uint32_t len = 0;
+	for(int i = 0; i < 4; i++){
+		read_reg_empty_check();
+		len |= (*USART2_DR << (i * 8));
+	}
+
+	// receive firmware and write to flash
+	flash_write(0x08008000, len);
+}
+
+void app_jump()
+	
 
 
 int main()

@@ -6,6 +6,7 @@ OBJCOPY = arm-none-eabi-objcopy
 GCC_FLAGS = -nostdlib -mcpu=cortex-m4 -mthumb -fno-exceptions -fno-rtti -O1
 C_FLAGS = -nostdlib -mcpu=cortex-m4 -mthumb -O1
 
+
 SRC = bootloader/main.cpp
 STUB = include/stub.c
 STARTUP = include/startup.s
