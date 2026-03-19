@@ -5,6 +5,7 @@ OBJCOPY = arm-none-eabi-objcopy
 
 GCC_FLAGS = -nostdlib -mcpu=cortex-m4 -mthumb -fno-exceptions -fno-rtti -O1
 C_FLAGS = -nostdlib -mcpu=cortex-m4 -mthumb -O1
+DEBUG_FLAGS = -nostdlib -mcpu=cortex-m4 -mthumb -fno-exceptions -fno-rtti -O0 -g
 
 
 SRC = bootloader/main.cpp
@@ -31,6 +32,13 @@ main.bin: main.elf
 
 flash: main.bin
 	st-flash write main.bin 0x08000000
+
+debug:
+	$(CC) -c $(DEBUG_FLAGS) $(SRC) -o main.o
+	$(CC) -c $(DEBUG_FLAGS) $(STUB) -o stub.o
+	arm-none-eabi-as -mcpu=cortex-m4 -mthumb $(STARTUP) -o startup.o
+	$(LD) -T $(LINK_SRC) -o main.elf
+	$(OBJCOPY) -O binary main.elf main.bin
 
 clean:
 	rm -f *.o *.elf *.bin

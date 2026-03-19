@@ -195,10 +195,7 @@ void start_recieve(){
 
 	// receive firmware and write to flash
 	flash_write(0x08008000, len);
-}
-
-void app_jump()
-	
+}	
 
 
 int main()
