@@ -197,6 +197,10 @@ void start_recieve(){
 	flash_write(0x08008000, len);
 }	
 
+void app_jump(){
+	app_pc = reinterpret_cast<volatile uint32_t >(0x08)
+	app_sp
+}
 
 int main()
 {
