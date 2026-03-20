@@ -1,5 +1,6 @@
 
 CC = arm-none-eabi-gcc
+CXX = arm-none-eabi-g++
 LD = arm-none-eabi-ld
 OBJCOPY = arm-none-eabi-objcopy
 
@@ -16,7 +17,7 @@ LINK_SRC = include/main.ld
 all: main.bin
 
 main.o: $(SRC)
-	$(CC) -c $(GCC_FLAGS) $(SRC) -o main.o
+	$(CXX) -c $(GCC_FLAGS) $(SRC) -o main.o
 
 stub.o: $(STUB)
 	$(CC) -c $(C_FLAGS) $(STUB) -o stub.o

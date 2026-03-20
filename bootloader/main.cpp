@@ -198,8 +198,15 @@ void start_recieve(){
 }	
 
 void app_jump(){
-	app_pc = reinterpret_cast<volatile uint32_t >(0x08)
-	app_sp
+	uint32_t app_pc = reinterpret_cast<volatile uint32_t*>(0x08008004);
+	uint32_t app_sp = reinterpret_cast<volatile uint32_t*>(0x08008000);
+	
+	__asm volatile(
+			"mov sp, %0\n"
+			"bx %1\n"
+			: : "r" (app_sp), "r" (app_pc)
+		      );
+	
 }
 
 int main()
