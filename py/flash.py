@@ -1,4 +1,5 @@
 import serial
+import io
 import os
 import sys
 
@@ -11,19 +12,25 @@ DATA = open(BINARY , "rb").read()
 
 # object creating using our agreed BR and user entered port
 print(f"Opening serial connection at {PORT}") 
-ser = serial.Serial(PORT, BAUD_RATE, timeout=5)
+ser = serial.Serial(port=PORT, 
+                    baudrate=BAUD_RATE, 
+                    bytesize=serial.EIGHTBITS,
+                    stopbits=serial.STOPBITS_ONE,
+                    parity=serial.PARITY_NONE, 
+                    timeout=5.0)
+
+sio = io.TextIOWrapper(ser, encoding='utf-8', newline='\n')
 
 messages = []
 
 def recieve_serial():
     while True:
-        line = ser.readline()
+        line = sio.readline()
         if not line:
             break
-        messages.append(line.decode('utf-8').strip())
+        messages.append(line.strip())
 
 def write_serial():
-    print("Start write\n")
     ser.write(BIN_LEN.to_bytes(4, "little"))
     ser.write(DATA)
     print(f"Sent {BIN_LEN} bytes over serial to {PORT}")
@@ -31,7 +38,6 @@ def write_serial():
 def main():
     recieve_serial()
     write_serial()
-    recieve_serial()
     for msg in messages:
         print(msg)
     ser.close()

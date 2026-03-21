@@ -41,6 +41,8 @@ void uart_send_string(const char* msg){
 		transmit_reg_empty_check();
 		*USART2_DR = *msg++;
 	}
+	// wait for last bit to fully transmit
+	while(!(*USART_SR & (1 << 6)));
 }
 
 
@@ -172,6 +174,7 @@ void flash_write(uint32_t dest, uint32_t len){
 	*FLASH_CR |= (1 << 0);
 
 	for(uint32_t i = 0; i < len; i++){
+		uart_send_string("WRITE: flash write occuring...\n");	
 		flash_bsy_wait();
 		// receive byte over UART
 		read_reg_empty_check();
@@ -197,7 +200,17 @@ void start_recieve(){
 		read_reg_empty_check();
 		len |= (*USART2_DR << (i * 8));
 	}
-
+	
+	if(len == 0){
+		uart_send_string("RECIEVE: len is zero, flash write corrupted\n");
+	}else if(len > 0){
+		uart_send_string("RECIEVE: len is greater then zero\n"); 
+	}else if(len < 10){
+		uart_send_string("RECIEVE: len is less then 10, send not complete\n"); 
+	}else if(len > 100){
+		uart_send_string("RECIEVE: len is greater then 100, send may be complete\n"); 
+	}
+	
 	// receive firmware and write to flash
 	flash_write(0x08008000, len);
 }	
@@ -220,6 +233,5 @@ int main()
 	start_transmission();
 	flash_init();
 	start_recieve();
-
 	app_jump();
 }
