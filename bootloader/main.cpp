@@ -1,4 +1,3 @@
-
 #include<cstdint>
 
 #define USART2_BASE 0x40004400
@@ -81,7 +80,7 @@ void start_transmission(){
 	// DR is empty, then fill with our char x
 	// loop through char array for send	
 	
-	const char text[] = "\n TEST";	
+	const char text[] = "\n is it fixed\n";	
 	uart_send_string(text);	
 
 }
@@ -94,9 +93,14 @@ void flash_init(){
 	const uint32_t KEY1 = 0x45670123; 
 	const uint32_t KEY2 = 0xCDEF89AB; 
 	
-	// consecutive writing	
 	*FLASH_KEYR = KEY1;
 	*FLASH_KEYR = KEY2;
+	
+	if(*FLASH_CR & (1 << 31)){
+		uart_send_string("FLASH INIT: FLASH_CR is locked\n");
+	} else{
+		uart_send_string("FLASH INIT: FLASH_CR is unlocked\n");
+	}
 	// setting PSIZE for our boards voltage range (3.3V)
 	// choosing bytes for PSIZE (8-bit)
 	*FLASH_CR &= ~(3 << 8);
@@ -180,6 +184,7 @@ void flash_write(uint32_t dest, uint32_t len){
 	// clear PG bit
 	*FLASH_CR &= ~(1 << 0);
 	uart_send_string("BOOT: flash write complete\n");
+	
 }
 
 void start_recieve(){
@@ -198,8 +203,8 @@ void start_recieve(){
 }	
 
 void app_jump(){
-	uint32_t app_pc = reinterpret_cast<volatile uint32_t*>(0x08008004);
-	uint32_t app_sp = reinterpret_cast<volatile uint32_t*>(0x08008000);
+	uint32_t app_pc = *reinterpret_cast<volatile uint32_t*>(0x08008004);
+	uint32_t app_sp = *reinterpret_cast<volatile uint32_t*>(0x08008000);
 	
 	__asm volatile(
 			"mov sp, %0\n"
@@ -212,7 +217,9 @@ void app_jump(){
 int main()
 {
 	open_USART_config();
-	flash_init();
 	start_transmission();
+	flash_init();
 	start_recieve();
+
+	app_jump();
 }

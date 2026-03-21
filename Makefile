@@ -17,7 +17,7 @@ LINK_SRC = include/main.ld
 all: main.bin
 
 main.o: $(SRC)
-	$(CXX) -c $(GCC_FLAGS) $(SRC) -o main.o
+	$(CC) -c $(GCC_FLAGS) $(SRC) -o main.o
 
 stub.o: $(STUB)
 	$(CC) -c $(C_FLAGS) $(STUB) -o stub.o
