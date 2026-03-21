@@ -10,9 +10,9 @@ DEBUG_FLAGS = -nostdlib -mcpu=cortex-m4 -mthumb -fno-exceptions -fno-rtti -O0 -g
 
 
 SRC = bootloader/main.cpp
-STUB = include/stub.c
-STARTUP = include/startup.s
-LINK_SRC = include/main.ld
+STUB = inc/stub.c
+STARTUP = inc/startup.s
+LINK_SRC = inc/main.ld
 
 all: main.bin
 

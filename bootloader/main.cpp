@@ -80,7 +80,7 @@ void start_transmission(){
 	// DR is empty, then fill with our char x
 	// loop through char array for send	
 	
-	const char text[] = "\n is it fixed\n";	
+	const char text[] = "TESTING\n";	
 	uart_send_string(text);	
 
 }

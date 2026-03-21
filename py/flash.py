@@ -10,22 +10,30 @@ BIN_LEN = os.path.getsize(BINARY)
 DATA = open(BINARY , "rb").read()
 
 # object creating using our agreed BR and user entered port
-
 print(f"Opening serial connection at {PORT}") 
 ser = serial.Serial(PORT, BAUD_RATE, timeout=5)
 
+messages = []
+
 def recieve_serial():
-    test_recv = ser.readline() 
-    print(f"Recieved: {test_recv}")
+    while True:
+        line = ser.readline()
+        if not line:
+            break
+        messages.append(line.decode('utf-8').strip())
 
 def write_serial():
-    ser.write(size.to_bytes(4, "little"))
+    print("Start write\n")
+    ser.write(BIN_LEN.to_bytes(4, "little"))
     ser.write(DATA)
     print(f"Sent {BIN_LEN} bytes over serial to {PORT}")
 
-
 def main():
     recieve_serial()
+    write_serial()
+    recieve_serial()
+    for msg in messages:
+        print(msg)
     ser.close()
     return 0
 
