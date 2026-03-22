@@ -27,8 +27,9 @@ messages = []
 def recieve_serial():
     while True:
         line = sio.readline()
+        print(f"added: {line}") 
         messages.append(line.strip())
-        if line == "handshake":
+        if line == "handshake\n":
             break
 
 def write_serial():
