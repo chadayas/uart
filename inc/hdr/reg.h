@@ -1,5 +1,10 @@
 #include<cstdint>
 
+// definitions of the used registers for bare metal access
+// base defined as integers, we then reinterpret them into 
+// pointers to represent a memory addr
+
+
 #define USART2_BASE 0x40004400
 #define RCC_BASE    0x40023800
 #define GPIOA_BASE  0x40020000
