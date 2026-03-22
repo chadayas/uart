@@ -2,6 +2,7 @@ import serial
 import io
 import os
 import sys
+import time
 
 BAUD_RATE = 115200
 PORT = sys.argv[1]
@@ -26,9 +27,9 @@ messages = []
 def recieve_serial():
     while True:
         line = sio.readline()
-        if not line:
-            break
         messages.append(line.strip())
+        if line == "handshake":
+            break
 
 def write_serial():
     ser.write(BIN_LEN.to_bytes(4, "little"))
@@ -37,9 +38,9 @@ def write_serial():
 
 def main():
     recieve_serial()
-    write_serial()
     for msg in messages:
         print(msg)
+    write_serial()
     ser.close()
     return 0
 

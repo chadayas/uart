@@ -42,7 +42,7 @@ void uart_send_string(const char* msg){
 		*USART2_DR = *msg++;
 	}
 	// wait for last bit to fully transmit
-	while(!(*USART_SR & (1 << 6)));
+	while(!(*USART2_SR & (1 << 6)));
 }
 
 
@@ -232,6 +232,7 @@ int main()
 	open_USART_config();
 	start_transmission();
 	flash_init();
+	uart_send_string("handshake\n");
 	start_recieve();
 	app_jump();
 }
