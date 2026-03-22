@@ -15,10 +15,8 @@ inline void transmit_reg_empty_check(){
 }
 
 inline void read_reg_empty_check(){
-	while(!(*USART2_SR & (1 << 5))){
-		uart_send_string("handshake\n");
-		delay();
-	}
+	while(!(*USART2_SR & (1 << 5)))
+	
 }
 
 inline void flash_bsy_wait(){

@@ -24,6 +24,15 @@ sio = io.TextIOWrapper(ser, encoding='utf-8', newline='\n')
 
 messages = []
 
+def serial_handshake():
+    handshake = sio.readline()
+   # confirm we have recieved the byte from mcu 
+    if handshake == "mcu_rdy":
+        print("recieved handshake from mcu") 
+        byte = "host_rdy" 
+        ser.write(byte.endcode("utf-8")) 
+        recieve_serial()
+
 def recieve_serial():
     while True:
         line = sio.readline()

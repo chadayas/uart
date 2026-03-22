@@ -3,6 +3,11 @@
 #include "../inc/hdr/checks.h"
 #include "../inc/hdr/uart.h"
 
+void uart_send_hs(int bytes){
+	// used to send confirmation bytes to host	
+	transmit_reg_empty_check();
+	*USART2_DR = bytes;		
+}
 
 void uart_send_string(const char* msg){
 	while(*msg){
@@ -42,15 +47,27 @@ void start_transmission(){
 
 	// enable the transmitter
 	*USART2_CR1 |= (1 << 3); 
+	
+	// poke host to let them know we are ready
+	int rdy = 0x7f;	
+	while(!(*USART2_SR & (1 << 7))){
+		uart_send_hs(ACK);
 
-	const char text[] = "TESTING\n";	
-	uart_send_string(text);	
-
+	}	
 }
 
 void start_recieve(){
+	// TODO: implement a wait loop until we recieve
+	// the bytes from host to indicate it is ready 
+	// for more data transmission
+	
 	// RE bit enabled, search for start bit
 	*USART2_CR1 |= (1 << 2);
+	
+	read_reg_empty_check();
+	if((char)*USART_DR == "host_rdy"){
+
+	}
 
 	// receive firmware size (4 bytes, little endian)
 	uint32_t len = 0;
@@ -59,16 +76,7 @@ void start_recieve(){
 		len |= (*USART2_DR << (i * 8));
 	}
 	
-	if(len == 0){
-		uart_send_string("RECIEVE: len is zero, flash write corrupted\n");
-	}else if(len > 0){
-		uart_send_string("RECIEVE: len is greater then zero\n"); 
-	}else if(len < 10){
-		uart_send_string("RECIEVE: len is less then 10, send not complete\n"); 
-	}else if(len > 100){
-		uart_send_string("RECIEVE: len is greater then 100, send may be complete\n"); 
-	}
-	
+
 	// receive firmware and write to flash
 	flash_write(0x08008000, len);
 }	
