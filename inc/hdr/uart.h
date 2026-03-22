@@ -2,7 +2,7 @@
 
 // functions for handling uart peripheral
 
-void uart_send_string();
+void uart_send_string(const char* msg);
 
 void open_USART_config();
 

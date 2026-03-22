@@ -4,6 +4,13 @@
 #include "../inc/hdr/uart.h"
 
 
+void uart_send_string(const char* msg){
+	while(*msg){
+		transmit_reg_empty_check();
+		*USART2_DR = *msg++;
+	}
+}
+
 void open_USART_config(){
 	// enable clock for bus for GPIOA and USART2	
 	*RCC_AHB1ENR |= (1 << 0);
@@ -36,10 +43,6 @@ void start_transmission(){
 	// enable the transmitter
 	*USART2_CR1 |= (1 << 3); 
 
-	// wait untill hardware sets TXE bit to 1 indicating 
-	// DR is empty, then fill with our char x
-	// loop through char array for send	
-	
 	const char text[] = "TESTING\n";	
 	uart_send_string(text);	
 

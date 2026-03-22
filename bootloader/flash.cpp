@@ -23,7 +23,7 @@ void flash_init(){
 	*FLASH_CR &= ~(3 << 8);
 
 }
-'
+
 void flash_erase(){
 	// wait for any ongoing flash mem operations
 	flash_bsy_wait();
