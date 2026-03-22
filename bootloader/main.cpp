@@ -216,7 +216,6 @@ void app_jump(){
 			"bx %1\n"
 			: : "r" (app_sp), "r" (app_pc)
 		      );
-	
 }
 
 int main()

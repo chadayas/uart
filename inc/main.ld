@@ -1,6 +1,6 @@
 
 
-INPUT(main.o startup.o stub.o)
+INPUT(main.o flash.o usart.o startup.o stub.o)
 
 MEMORY {
 
