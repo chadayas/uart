@@ -7,7 +7,7 @@ void uart_send_string(const char* msg);
 // us the status of what is inside of the register
 // the while loop implements a wait
 inline void transmit_complete_wait(){
-	while(!(*USART2_SR & (1 << 1)));
+	while(!(*USART2_SR & (1 << 6)));
 }
 
 inline void delay(){

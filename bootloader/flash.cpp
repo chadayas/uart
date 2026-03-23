@@ -13,11 +13,6 @@ void flash_init(){
 	*FLASH_KEYR = KEY1;
 	*FLASH_KEYR = KEY2;
 	
-	if(*FLASH_CR & (1 << 31)){
-		uart_send_string("FLASH INIT: FLASH_CR is locked\n");
-	} else{
-		uart_send_string("FLASH INIT: FLASH_CR is unlocked\n");
-	}
 	// setting PSIZE for our boards voltage range (3.3V)
 	// choosing bytes for PSIZE (8-bit)
 	*FLASH_CR &= ~(3 << 8);
@@ -80,10 +75,6 @@ void flash_erase(){
 void flash_write(uint32_t dest, uint32_t len){
 	uint8_t* ptr = reinterpret_cast<uint8_t*>(dest);
 
-	uart_send_string("BOOT: Erasing flash from 0x08008000 to 0x0807FFFF\n");
-	flash_erase();
-	uart_send_string("BOOT: flash erased\n");
-
 	flash_bsy_wait();
 	// enable flash programming
 	*FLASH_CR |= (1 << 0);
@@ -101,7 +92,9 @@ void flash_write(uint32_t dest, uint32_t len){
 	// clear PG bit
 	*FLASH_CR &= ~(1 << 0);
 	uart_send_string("BOOT: flash write complete\n");
-	
+
+	// gate 3: write done — wait for host to confirm before jumping to app
+	wait_for_ack(0x79, 0x79);
 }
 
 void app_jump(){

@@ -7,7 +7,7 @@
 int main()
 {
 	open_USART_config();
-	start_transmission();
 	flash_init();
+	start_transmission();
 	app_jump();
 }
