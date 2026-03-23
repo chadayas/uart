@@ -89,7 +89,6 @@ void flash_write(uint32_t dest, uint32_t len){
 	*FLASH_CR |= (1 << 0);
 
 	for(uint32_t i = 0; i < len; i++){
-		uart_send_string("WRITE: flash write occuring...\n");	
 		flash_bsy_wait();
 		// receive byte over UART
 		read_reg_empty_check();

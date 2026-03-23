@@ -11,6 +11,8 @@ BINARY = sys.argv[2]
 BIN_LEN = os.path.getsize(BINARY)
 DATA = open(BINARY , "rb").read()
 
+MAX_ATTEMPTS = 5
+
 # object creating using our agreed BR and user entered port
 print(f"Opening serial connection at {PORT}") 
 ser = serial.Serial(port=PORT, 
@@ -19,27 +21,35 @@ ser = serial.Serial(port=PORT,
                     stopbits=serial.STOPBITS_ONE,
                     parity=serial.PARITY_NONE, 
                     timeout=5.0)
+ser.reset_input_buffer()
 
 sio = io.TextIOWrapper(ser, encoding='utf-8', newline='\n')
 
 messages = []
 
 def serial_handshake():
-    handshake = sio.readline()
+    attempts = 0 
+    handshake = ser.read(size=1)
    # confirm we have recieved the byte from mcu 
-    if handshake == "mcu_rdy":
-        print("recieved handshake from mcu") 
-        byte = "host_rdy" 
-        ser.write(byte.endcode("utf-8")) 
-        recieve_serial()
+    running = True 
+    while running: 
+        print(f"num of attempts: {attempts}") 
+        if handshake == b'\x7f':
+            print("COMMS: recieved handshake from mcu") 
+            rdy_byte = b'\x79' 
+            ser.write(rdy_byte) 
+            break
+        if attempts == MAX_ATTEMPTS:
+            running = False 
+            raise TimeoutError("COMMS: haven't recieved byte, program exit") 
+            break
+        attempts+= 1
 
 def recieve_serial():
     while True:
-        line = sio.readline()
-        print(f"added: {line}") 
-        messages.append(line.strip())
-        if line == "handshake\n":
-            break
+        line = ser.read_all()
+        print(f"{line}") 
+        break
 
 def write_serial():
     ser.write(BIN_LEN.to_bytes(4, "little"))
@@ -47,9 +57,9 @@ def write_serial():
     print(f"Sent {BIN_LEN} bytes over serial to {PORT}")
 
 def main():
+    serial_handshake() 
     recieve_serial()
-    for msg in messages:
-        print(msg)
+    recieve_serial()
     write_serial()
     ser.close()
     return 0

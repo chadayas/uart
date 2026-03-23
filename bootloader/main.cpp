@@ -9,6 +9,5 @@ int main()
 	open_USART_config();
 	start_transmission();
 	flash_init();
-	start_recieve();
 	app_jump();
 }
