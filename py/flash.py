@@ -33,7 +33,6 @@ def serial_handshake():
    # confirm we have recieved the byte from mcu 
     running = True 
     while running: 
-        print(f"num of attempts: {attempts}") 
         if handshake == b'\x7f':
             print("COMMS: recieved handshake from mcu") 
             rdy_byte = b'\x79' 
@@ -47,8 +46,9 @@ def serial_handshake():
 
 def recieve_serial():
     while True:
-        line = ser.read_all()
-        print(f"{line}") 
+        line = ser.readline()
+        if b'\x7f' not in line: 
+            print(f"{line}") 
         break
 
 def write_serial():

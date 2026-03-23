@@ -7,6 +7,7 @@ void uart_send_hs(int bytes){
 	// used to send confirmation bytes to host	
 	transmit_reg_empty_check();
 	*USART2_DR = bytes;		
+	transmit_complete_wait();
 }
 
 void uart_send_string(const char* msg){
@@ -14,6 +15,7 @@ void uart_send_string(const char* msg){
 		transmit_reg_empty_check();
 		*USART2_DR = *msg++;
 	}
+	transmit_complete_wait();	
 }
 
 void open_USART_config(){
