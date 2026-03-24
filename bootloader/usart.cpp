@@ -86,15 +86,15 @@ void start_recieve(){
 		len |= (*USART2_DR << (i * 8));
 	}
 
-	if(len) uart_send_string("BOOT: firmware size received\n");
+	if (len) uart_send_string("BOOT: firmware size received\n");
 
 	// gate 1: length received, about to erase — wait for host to confirm
-	wait_for_ack(0x79, 0x79);
+	wait_for_ack(0x05, 0x05);
 
 	flash_erase();
 
 	// gate 2: erase done — wait for host to confirm before streaming binary
-	wait_for_ack(0x79, 0x79);
+	wait_for_ack(0x06, 0x06);
 
 	flash_write(0x08008000, len);
 }

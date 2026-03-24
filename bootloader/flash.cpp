@@ -94,7 +94,7 @@ void flash_write(uint32_t dest, uint32_t len){
 	uart_send_string("BOOT: flash write complete\n");
 
 	// gate 3: write done — wait for host to confirm before jumping to app
-	wait_for_ack(0x79, 0x79);
+	wait_for_ack(0x07, 0x07);
 }
 
 void app_jump(){

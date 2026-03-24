@@ -5,7 +5,7 @@ import sys
 BAUD_RATE = 115200
 PORT = sys.argv[1]
 BINARY = sys.argv[2]
-
+TAG = "HOST"
 BIN_LEN = os.path.getsize(BINARY)
 DATA = open(BINARY, "rb").read()
 
@@ -23,7 +23,7 @@ ser.reset_input_buffer()
 def read_frame():
     type_byte = ser.read(1)
     if not type_byte:
-        return (None, None)
+        raise TimeoutError(f"{TAG} cannot decipher type_byte:{type_byte}") 
     t = type_byte[0]
     if t == 0x01:
         proto = ser.read(1)
@@ -56,9 +56,9 @@ def serial_handshake():
     while True:
         b = ser.read(1)
         if b == b'\x7f':
-            print("COMMS: received handshake from MCU")
+            print(f"{TAG}: received handshake from MCU {b}")
             ser.write(b'\x79')
-            print("COMMS: host is ready")
+            print(TAG +": host is ready")
             break
 
 def write_serial():
@@ -66,20 +66,20 @@ def write_serial():
     ser.write(BIN_LEN.to_bytes(4, "little"))
 
     # gate 1: MCU received length, about to erase
-    wait_for_proto(0x79)
-    sync(0x79)
+    wait_for_proto(0x05)
+    sync(0x05)
 
     # gate 2: MCU erase done, ready for binary
-    wait_for_proto(0x79)
-    sync(0x79)
+    wait_for_proto(0x06)
+    sync(0x06)
 
     # stream binary
     ser.write(DATA)
     print(f"Sent {BIN_LEN} bytes over serial to {PORT}")
 
     # gate 3: MCU write complete
-    wait_for_proto(0x79)
-    sync(0x79)
+    wait_for_proto(0x07)
+    sync(0x07)
 
 def main():
     serial_handshake()

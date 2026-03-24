@@ -1,5 +1,12 @@
 #include "reg.h"
 
+inline void clear_uart_err_flags(){
+	volatile uint32_t sr = *USART2_SR;
+	volatile uint32_t dr = *USART2_DR;
+	
+}
+
+
 // forward declarations needed for handshake
 void uart_send_string(const char* msg);
 
