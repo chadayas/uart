@@ -27,6 +27,9 @@ void wait_for_ack(uint8_t send_byte, uint8_t expect_byte){
 	while(1){
 		uart_send_proto(send_byte);
 		delay();
+		// implement a read of the status register in order to clear
+		// err flags; ORE ,FR , NE
+		volatile uint32_t sr = *USART2_SR;
 		if(*USART2_SR & (1 << 5)){
 			if((uint8_t)*USART2_DR == expect_byte) break;
 		}
@@ -86,7 +89,7 @@ void start_recieve(){
 		len |= (*USART2_DR << (i * 8));
 	}
 
-	if (len) uart_send_string("BOOT: firmware size received\n");
+	if (len) uart_send_string("MCU: firmware size received\n");
 
 	// gate 1: length received, about to erase — wait for host to confirm
 	wait_for_ack(0x05, 0x05);

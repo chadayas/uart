@@ -3,7 +3,6 @@
 inline void clear_uart_err_flags(){
 	volatile uint32_t sr = *USART2_SR;
 	volatile uint32_t dr = *USART2_DR;
-	
 }
 
 
@@ -27,6 +26,7 @@ inline void transmit_reg_empty_check(){
 }
 
 inline void read_reg_empty_check(){
+	clear_uart_err_flags();
 	// bit 5 RXNE bit check if recieved data is ready to be read	
 	while(!(*USART2_SR & (1 << 5)));
 	

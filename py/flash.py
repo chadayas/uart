@@ -50,6 +50,7 @@ def wait_for_proto(expect_byte):
 # echo a raw byte back to MCU to break its wait_for_ack loop
 def sync(byte):
     ser.write(bytes([byte]))
+    ser.reset_input_buffer()
 
 def serial_handshake():
     # initial sync — raw 0x7F from MCU, raw 0x79 reply from host (no type prefix)
@@ -57,6 +58,7 @@ def serial_handshake():
         b = ser.read(1)
         if b == b'\x7f':
             print(f"{TAG}: received handshake from MCU {b}")
+            ser.reset_input_buffer() 
             ser.write(b'\x79')
             print(TAG +": host is ready")
             break
