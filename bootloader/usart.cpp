@@ -3,18 +3,7 @@
 #include "../inc/hdr/checks.h"
 #include "../inc/hdr/uart.h"
 
-// type prefix: 0x01 = protocol byte, 0x02 = debug string
-void uart_send_proto(uint8_t byte){
-	transmit_reg_empty_check();
-	*USART2_DR = 0x01;
-	transmit_reg_empty_check();
-	*USART2_DR = byte;
-	transmit_complete_wait();
-}
-
 void uart_send_string(const char* msg){
-	transmit_reg_empty_check();
-	*USART2_DR = 0x02;
 	while(*msg){
 		transmit_reg_empty_check();
 		*USART2_DR = *msg++;
@@ -22,40 +11,32 @@ void uart_send_string(const char* msg){
 	transmit_complete_wait();
 }
 
-// sends send_byte repeatedly until expect_byte is received back from host
-void wait_for_ack(uint8_t send_byte, uint8_t expect_byte){
-	while(1){
-		uart_send_proto(send_byte);
-		delay();
-		// implement a read of the status register in order to clear
-		// err flags; ORE ,FR , NE
-		volatile uint32_t sr = *USART2_SR;
-		if(*USART2_SR & (1 << 5)){
-			if((uint8_t)*USART2_DR == expect_byte) break;
-		}
-	}
+void uart_send_byte(uint8_t byte){
+	transmit_reg_empty_check();
+	*USART2_DR = byte;
+	transmit_complete_wait();
 }
 
 void open_USART_config(){
-	// enable clock for bus for GPIOA and USART2
+	// enable clock for GPIOA and USART2
 	*RCC_AHB1ENR |= (1 << 0);
-       	*RCC_APB1ENR |= (1 << 17);
-	// change mode to alternate function for PA2
+	*RCC_APB1ENR |= (1 << 17);
+
+	// PA2 and PA3 to alternate function mode
 	*GPIOA_MODER |= (1 << 5);
-       // change mode to alternate function for PA3
 	*GPIOA_MODER |= (1 << 7);
 
-	// alternate function selection for USART2_TX
+	// AF7 for USART2_TX (PA2)
 	*GPIOA_AFRL |= (1 << 10);
 	*GPIOA_AFRL |= (1 << 9);
 	*GPIOA_AFRL |= (1 << 8);
 
-	// alternate function selection for USART2_RX
+	// AF7 for USART2_RX (PA3)
 	*GPIOA_AFRL |= (1 << 14);
 	*GPIOA_AFRL |= (1 << 13);
 	*GPIOA_AFRL |= (1 << 12);
 
-	// setting baud rate at 115200
+	// baud rate 115200 at 16MHz HSI
 	*USART2_BRR = (8 << 4) | 11;
 
 	// enable USART
@@ -67,12 +48,9 @@ void start_transmission(){
 	*USART2_CR1 |= (1 << 3);
 	*USART2_CR1 |= (1 << 2);
 
-	// initial handshake — raw 0x7F, no type prefix
-	// host responds with raw 0x79 to confirm it is alive
+	// send 0x7F until host responds with 0x79
 	while(1){
-		transmit_reg_empty_check();
-		*USART2_DR = 0x7F;
-		transmit_complete_wait();
+		uart_send_byte(0x7F);
 		delay();
 		if(*USART2_SR & (1 << 5)){
 			if((uint8_t)*USART2_DR == 0x79) break;
@@ -89,15 +67,11 @@ void start_recieve(){
 		len |= (*USART2_DR << (i * 8));
 	}
 
-	if (len) uart_send_string("MCU: firmware size received\n");
-
-	// gate 1: length received, about to erase — wait for host to confirm
-	wait_for_ack(0x05, 0x05);
-
+	uart_send_string("MCU: erasing flash\n");
 	flash_erase();
 
-	// gate 2: erase done — wait for host to confirm before streaming binary
-	wait_for_ack(0x06, 0x06);
+	// signal host erase is done, ready for binary
+	uart_send_byte(0x79);
 
 	flash_write(0x08008000, len);
 }

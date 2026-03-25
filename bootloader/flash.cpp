@@ -74,27 +74,34 @@ void flash_erase(){
 
 void flash_write(uint32_t dest, uint32_t len){
 	uint8_t* ptr = reinterpret_cast<uint8_t*>(dest);
+	const uint32_t CHUNK = 32;
+	uint8_t buf[CHUNK];
 
 	flash_bsy_wait();
-	// enable flash programming
 	*FLASH_CR |= (1 << 0);
 
-	for(uint32_t i = 0; i < len; i++){
-		flash_bsy_wait();
-		// receive byte over UART
-		read_reg_empty_check();
-		uint8_t byte = *USART2_DR;
-		// write byte to flash
-		*ptr++ = byte;
-		flash_bsy_wait();
+	for(uint32_t offset = 0; offset < len; offset += CHUNK){
+		uint32_t n = ((len - offset) < CHUNK) ? (len - offset) : CHUNK;
+
+		// read chunk into SRAM buffer
+		for(uint32_t i = 0; i < n; i++){
+			read_reg_empty_check();
+			buf[i] = (uint8_t)*USART2_DR;
+		}
+
+		// write SRAM buffer to flash
+		for(uint32_t i = 0; i < n; i++){
+			flash_bsy_wait();
+			*ptr++ = buf[i];
+			flash_bsy_wait();
+		}
+
+		// ACK chunk done, host sends next
+		uart_send_byte(0x79);
 	}
 
-	// clear PG bit
 	*FLASH_CR &= ~(1 << 0);
-	uart_send_string("BOOT: flash write complete\n");
-
-	// gate 3: write done — wait for host to confirm before jumping to app
-	wait_for_ack(0x07, 0x07);
+	uart_send_string("BOOT: write complete\n");
 }
 
 void app_jump(){

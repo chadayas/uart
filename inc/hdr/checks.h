@@ -17,7 +17,7 @@ inline void transmit_complete_wait(){
 }
 
 inline void delay(){
-	for(uint32_t i = 0; i < 10000; i++){;}
+	for(uint32_t i = 0; i < 500000; i++){;}
 }
 
 inline void transmit_reg_empty_check(){
