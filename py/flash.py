@@ -27,10 +27,12 @@ sio = io.TextIOWrapper(io.BufferedRWPair(ser, ser))
 
 
 def read_serial():
+    # read serial for string sends from mcu 
     msg_read = sio.readline().strip()
     print(msg_read)
 
 def wait_ack():
+    # check for confirmation from mcu before moving on, rasie error if wrong 
     b = ser.read(1)
     if b != b'\x79':
         raise RuntimeError(f"expected ACK 0x79, got {b}")
@@ -62,7 +64,9 @@ def write_serial():
         ser.write(chunk)
         wait_ack()
         total += len(chunk)
-        print(f"HOST: {total}/{BIN_LEN} bytes written")
+        print(f"HOST: {total}/{BIN_LEN} bytes written", end='\r', flush=True)
+        time.sleep(0.01)
+    read_serial()
 
 def main():
     serial_handshake()

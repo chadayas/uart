@@ -101,7 +101,7 @@ void flash_write(uint32_t dest, uint32_t len){
 	}
 
 	*FLASH_CR &= ~(1 << 0);
-	uart_send_string("BOOT: write complete\n");
+	uart_send_string("MCU: write complete\n");
 }
 
 void app_jump(){

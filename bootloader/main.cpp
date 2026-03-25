@@ -4,10 +4,13 @@
 #include "../inc/hdr/uart.h"
 #include "../inc/hdr/flash.h"
 
+
 int main()
 {
 	open_USART_config();
 	flash_init();
-	start_transmission();
-	app_jump();
+	while(1){	
+	   start_transmission();
+		app_jump();
+	}
 }
