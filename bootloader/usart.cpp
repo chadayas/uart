@@ -47,7 +47,8 @@ void start_transmission(){
 	// enable TX and RX
 	*USART2_CR1 |= (1 << 3);
 	*USART2_CR1 |= (1 << 2);
-
+   
+   uint32_t attempts = 0
 	// send 0x7F until host responds with 0x79
 	while(1){
 		uart_send_byte(0x7F);
@@ -55,7 +56,8 @@ void start_transmission(){
 		if(*USART2_SR & (1 << 5)){
 			if((uint8_t)*USART2_DR == 0x79) break;
 		}
-	}
+      if (attempts++ > 1000) app_jump();	
+   }
 	start_recieve();
 }
 

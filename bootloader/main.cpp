@@ -9,8 +9,7 @@ int main()
 {
 	open_USART_config();
 	flash_init();
-	while(1){	
-	   start_transmission();
-		app_jump();
-	}
+   start_transmission();
+	app_jump();
+	
 }

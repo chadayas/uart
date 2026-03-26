@@ -69,8 +69,14 @@ def write_serial():
     read_serial()
 
 def main():
-    serial_handshake()
+    # reset MCU so bootloader starts fresh
+    ser.dtr = False
+    time.sleep(0.1)
+    ser.dtr = True
+    time.sleep(0.5)
     ser.reset_input_buffer()
+
+    serial_handshake()
     write_serial()
     ser.close()
     return 0
