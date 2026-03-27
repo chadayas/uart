@@ -1,14 +1,5 @@
 #include "reg.h"
-
-// function to implement a physical press of the black RESET
-// button on stm32 programmatically
-void hardware_reset(){
-   reset_byte = *USART_DR;
-    
-   if (reset_byte == 0x80){
-      *AIRCR = 
-   }
-}
+#define REG_KEY 0x5FA
 
 // sequentially reading of status register 
 // and data register to clear any uart error flags

@@ -48,7 +48,7 @@ void start_transmission(){
 	*USART2_CR1 |= (1 << 3);
 	*USART2_CR1 |= (1 << 2);
    
-   uint32_t attempts = 0
+   uint32_t attempts = 0;
 	// send 0x7F until host responds with 0x79
 	while(1){
 		uart_send_byte(0x7F);
