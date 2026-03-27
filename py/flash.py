@@ -25,6 +25,10 @@ ser.reset_input_buffer()
 
 sio = io.TextIOWrapper(io.BufferedRWPair(ser, ser))
 
+def send_reset_byte():
+    print("HOST: starting hardware reset to 0x80000000...")
+    ser.write(b'\x80')
+    
 
 def read_serial():
     # read serial for string sends from mcu 
@@ -69,12 +73,6 @@ def write_serial():
     read_serial()
 
 def main():
-    # reset MCU so bootloader starts fresh
-    ser.dtr = False
-    time.sleep(0.1)
-    ser.dtr = True
-    time.sleep(0.5)
-    ser.reset_input_buffer()
 
     serial_handshake()
     write_serial()

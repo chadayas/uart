@@ -10,6 +10,8 @@
 #define GPIOA_BASE  0x40020000
 #define FLASH_BASE  0x40023C00
 
+#define AIRCR reinterpret_cast<volatile uint32_t*>(0xE000ED0C)
+
 #define GPIOA_MODER reinterpret_cast<volatile uint32_t*>(GPIOA_BASE + 0x00)
 #define GPIOA_AFRL  reinterpret_cast<volatile uint32_t*>(GPIOA_BASE + 0x20)
 

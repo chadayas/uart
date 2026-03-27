@@ -71,8 +71,8 @@ void start_recieve(){
 
 	uart_send_string("MCU: erasing flash\n");
 	flash_erase();
-
-	// signal host erase is done, ready for binary
+	
+   // signal host erase is done, ready for binary
 	uart_send_byte(0x79);
 
 	flash_write(0x08008000, len);
