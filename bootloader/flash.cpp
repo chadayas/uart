@@ -2,7 +2,7 @@
 #include "../inc/hdr/reg.h"
 #include "../inc/hdr/checks.h"
 #include "../inc/hdr/uart.h"
-#define REG_KEY 0x5FA
+#define REG_KEY 0x05FA
 
 void flash_init(){
 	// values must be programmed into the 
@@ -121,12 +121,16 @@ void app_jump(){
 // button on stm32 programmatically
 void hardware_reset(){
    // start function when python sends the byte 
-   uint32_t reset_byte = *USART2_DR;
+   uint8_t reset_byte = *USART2_DR;
    // write the reg key in the upper half of the AIRCR 
    // register, then actiavte SYSRESETREQ
-   if (reset_byte == 0x80){
-      *AIRCR |= (REG_KEY << 16); 
-      *AIRCR |= (1 << 2);
+   while(1){ 
+      if (reset_byte == 0x80){
+         *AIRCR |= (REG_KEY << 16); 
+         *AIRCR |= (1 << 2);
+         break; 
+      }
    }
+
 }
 

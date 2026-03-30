@@ -1,5 +1,4 @@
 #include "reg.h"
-#define REG_KEY 0x5FA
 
 // sequentially reading of status register 
 // and data register to clear any uart error flags

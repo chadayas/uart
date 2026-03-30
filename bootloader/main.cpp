@@ -7,7 +7,7 @@
 
 int main()
 {
-   hardware_reset();	
+   hardware_reset(); 
    open_USART_config();
 	flash_init();
    start_transmission();

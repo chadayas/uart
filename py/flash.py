@@ -25,15 +25,16 @@ ser.reset_input_buffer()
 
 sio = io.TextIOWrapper(io.BufferedRWPair(ser, ser))
 
-def send_reset_byte():
-    print("HOST: starting hardware reset to 0x80000000...")
-    ser.write(b'\x80')
-    
-
 def read_serial():
     # read serial for string sends from mcu 
     msg_read = sio.readline().strip()
     print(msg_read)
+
+
+def send_reset_byte():
+    rst_byte = b'\x80' 
+    print("HOST: starting hardware reset to 0x80000000...")
+    ser.write(rst_byte)
 
 def wait_ack():
     # check for confirmation from mcu before moving on, rasie error if wrong 
@@ -73,7 +74,7 @@ def write_serial():
     read_serial()
 
 def main():
-
+    send_reset_byte() 
     serial_handshake()
     write_serial()
     ser.close()
