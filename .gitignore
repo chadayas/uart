@@ -1,2 +1,4 @@
 test.bin
 test.elf
+*.bin
+test
