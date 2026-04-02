@@ -4,10 +4,29 @@
 #include "../inc/hdr/uart.h"
 #include "../inc/hdr/flash.h"
 
+// function to implement a physical press of the black RESET
+// button on stm32 programmatically
+void hardware_reset(){
+   // start function when python sends the byte 
+   // write the reg key in the upper half of the AIRCR 
+   // register, then actiavte SYSRESETREQ
+   uint32_t attempts = 0; 
+   while(1){	  
+      if(*USART2_SR & (1 << 5)){
+         read_reg_empty_check(); 
+         uint8_t reset_byte = (uint8_t)*USART2_DR;
+         if (reset_byte == 0x80){
+         *AIRCR |= (REG_KEY << 16); 
+         *AIRCR |= (1 << 2);
+            }
+         }
+      if (attempts++ > 250) break;
+   }
+}
 
 int main()
 {
-   hardware_reset(); 
+   //hardware_reset(); 
    open_USART_config();
 	flash_init();
    start_transmission();

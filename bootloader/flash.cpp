@@ -117,20 +117,5 @@ void app_jump(){
 
 
 
-// function to implement a physical press of the black RESET
-// button on stm32 programmatically
-void hardware_reset(){
-   // start function when python sends the byte 
-   uint8_t reset_byte = *USART2_DR;
-   // write the reg key in the upper half of the AIRCR 
-   // register, then actiavte SYSRESETREQ
-   while(1){ 
-      if (reset_byte == 0x80){
-         *AIRCR |= (REG_KEY << 16); 
-         *AIRCR |= (1 << 2);
-         break; 
-      }
-   }
 
-}
 
