@@ -2,7 +2,6 @@
 #include "../inc/hdr/reg.h"
 #include "../inc/hdr/checks.h"
 #include "../inc/hdr/uart.h"
-#define REG_KEY 0x05FA
 
 void flash_init(){
 	// values must be programmed into the 
