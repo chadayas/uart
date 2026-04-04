@@ -35,7 +35,11 @@ void port_init(){
   tty.c_cc[VMIN] = 0;
 
   // Set in/out baud rate to be 9600
-  cfsetispeed(&tty, B460800);
-  cfsetospeed(&tty, B460800);
-
+  cfsetispeed(&tty, B115200);
+  cfsetospeed(&tty, B115200);
+  
+  if (tcsetattr(serial_port, TCSANOW, &tty) != 0) {
+      printf("Error %i from tcsetattr: %s\n", errno, strerror(errno));
+      return 1;
+  }
 }

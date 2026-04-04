@@ -11,7 +11,6 @@
 
 #include<cstdint>
 
-
-
-std::string read_from_port(int port, unsigned char* _buf);
+void port_init();
+void read_from_port(int port, unsigned char* _buf);
 void write_to_port(int port, uint8_t msg);
