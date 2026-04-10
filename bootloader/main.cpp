@@ -3,12 +3,12 @@
 #include "../inc/hdr/checks.h"
 #include "../inc/hdr/uart.h"
 #include "../inc/hdr/flash.h"
-#define REG_KEY 0x05FA
+#define REG_KEY 0x05FAUL
 
 // function to implement a physical press of the black RESET
 // button on stm32 programmatically
 void hardware_reset(){
-   *AIRCR |= (REG_KEY << 16); 
+   *AIRCR |= (REG_KEY << 16U); 
    *AIRCR |= (1 << 2);
 
 }
