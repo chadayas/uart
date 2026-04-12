@@ -3,15 +3,18 @@
 #include "../inc/hdr/checks.h"
 #include "../inc/hdr/uart.h"
 #include "../inc/hdr/flash.h"
-#define REG_KEY 0x05FAUL
+#define REG_KEY 0x05FAU
 
 // function to implement a physical press of the black RESET
 // button on stm32 programmatically
-void hardware_reset(){
-   *AIRCR |= (REG_KEY << 16U); 
-   *AIRCR |= (1 << 2);
 
+void hardware_reset(){
+   constexpr uint32_t mask = (REG_KEY << 16U) | // write key onto upper part of register
+                             (7U << 8U); // leave priority group unchanged  
+                             (1U << 2U) // set SYSRESETREQ bit
+   *AIRCR = mask; 
 }
+
 void wait_hw_reset(){
    // start function when python sends the byte 
    // write the reg key in the upper half of the AIRCR 
@@ -22,9 +25,8 @@ void wait_hw_reset(){
          read_reg_empty_check(); 
          uint8_t reset_byte = (uint8_t)*USART2_DR;
          if(reset_byte == 0x80){
-            *AIRCR |= (REG_KEY << 16); 
-            *AIRCR |= (1 << 2);
-               }
+            hardware_reset();   
+            }
          }
       if(attempts == 20){
          hardware_reset();  
@@ -35,11 +37,13 @@ void wait_hw_reset(){
 }
 
 int main()
+
 {
-   hardware_reset(); 
+   wait_hw_reset(); 
    open_USART_config();
 	flash_init();
    start_transmission();
 	app_jump();
 	
 }
+
