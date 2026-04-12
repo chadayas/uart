@@ -36,6 +36,7 @@ def send_reset_byte():
     print("HOST: starting hardware reset to 0x80000000...")
     ser.write(rst_byte)
 
+
 def wait_ack():
     # check for confirmation from mcu before moving on, rasie error if wrong 
     b = ser.read(1)
@@ -74,7 +75,7 @@ def write_serial():
     read_serial()
 
 def main():
-    time.sleep(1) 
+    send_reset_byte() 
     serial_handshake()
     write_serial()
     ser.close()

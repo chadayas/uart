@@ -44,10 +44,17 @@ void open_USART_config(){
 }
 
 void start_transmission(){
-	// enable TX and RX
+   // enable TX and RX
 	*USART2_CR1 |= (1 << 3);
 	*USART2_CR1 |= (1 << 2);
    
+   
+   // prompt for reset
+    
+   if(*USART2_DR & (1 << 5)){
+      if (*USART2_DR == 0x80) hardware_reset();
+   }
+
    uint32_t attempts = 0;
 	// send 0x7F until host responds with 0x79
 	while(1){
@@ -64,7 +71,7 @@ void start_transmission(){
 void start_recieve(){
 	// receive firmware size (4 bytes, little endian)
 	uint32_t len = 0;
-	for(int i = 0; i < 4; i++){
+	for(int i{}; i < 4; i++){
 		read_reg_empty_check();
 		len |= (*USART2_DR << (i * 8));
 	}

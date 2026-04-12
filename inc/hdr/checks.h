@@ -1,4 +1,5 @@
 #include "reg.h"
+#define REG_KEY 0x05FAU
 
 // sequentially reading of status register 
 // and data register to clear any uart error flags
@@ -41,3 +42,18 @@ inline void flash_bsy_wait(){
 }
 
 
+ // function to implement a physical press of the black RESET
+ // button on stm32 programmatically
+ 
+inline void hardware_reset(){
+    asm volatile("dsb 0xf":::"memory"); // data sync buffer, post a wait until key is written
+ 
+    constexpr uint32_t mask = (REG_KEY << 16U) | // write key onto upper part of register
+                              (7U << 8U) |// leave priority group unchanged
+                              (1U << 2U); // set SYSRESETREQ bit
+    *AIRCR = mask;
+ 
+    asm volatile("dsb 0xf":::"memory");
+    while(1); // spin program so no other code is ran
+}
+ 
