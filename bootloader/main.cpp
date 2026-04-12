@@ -9,10 +9,15 @@
 // button on stm32 programmatically
 
 void hardware_reset(){
+   asm volatile("dsb 0xf":::"memory"); // data sync buffer, post a wait until key is written
+   
    constexpr uint32_t mask = (REG_KEY << 16U) | // write key onto upper part of register
                              (7U << 8U); // leave priority group unchanged  
                              (1U << 2U) // set SYSRESETREQ bit
+   
    *AIRCR = mask; 
+
+   asm volatile("dsb 0xf":::"memory");
 }
 
 void wait_hw_reset(){
