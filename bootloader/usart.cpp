@@ -2,7 +2,6 @@
 #include "../inc/hdr/reg.h"
 #include "../inc/hdr/checks.h"
 #include "../inc/hdr/uart.h"
-#include "../inc/hdr/regreg.h"
 
 void uart_send_string(const char* msg){
 	while(*msg){
@@ -20,34 +19,38 @@ void uart_send_byte(uint8_t byte){
 
 void open_USART_config(){
 	// enable clock for GPIOA and USART2
-	rcc->AHB1ENR_REG |= RCC::Enable::GPIOA;
-	rcc->APB1ENR_REG |= RCC::Enable::USART2;
+	*RCC_AHB1ENR |= (1 << 0);
+	*RCC_APB1ENR |= (1 << 17);
 
 	// PA2 and PA3 to alternate function mode
-	gpioa->MODER_REG |= GPIOA::Set::PA2_AF_MODE;
-	gpioa->MODER_REG |= GPIOA::Set::PA3_AF_MODE;
+	*GPIOA_MODER |= (1 << 5);
+	*GPIOA_MODER |= (1 << 7);
 
-	// AF7 for USART2_TX (PA2) and USART2_RX (PA3)
-	gpioa->AFRL_REG |= GPIOA::Set::USART2_TX;
-	gpioa->AFRL_REG |= GPIOA::Set::USART2_RX;
+	// AF7 for USART2_TX (PA2)
+	*GPIOA_AFRL |= (1 << 10);
+	*GPIOA_AFRL |= (1 << 9);
+	*GPIOA_AFRL |= (1 << 8);
+
+	// AF7 for USART2_RX (PA3)
+	*GPIOA_AFRL |= (1 << 14);
+	*GPIOA_AFRL |= (1 << 13);
+	*GPIOA_AFRL |= (1 << 12);
 
 	// baud rate 115200 at 16MHz HSI
-	usart2->BAUDRATE_REG = USART2::Set::BAUD_RATE;
+	*USART2_BRR = (8 << 4) | 11;
 
 	// enable USART
-	usart2->CTRL_REG |= USART2::Enable::USART;
+	*USART2_CR1 |= (1 << 13);
 }
 
 void start_transmission(){
-   using USART2::Status;	
-   
-   // enable TX and RX
-	usart2->CTRL_REG |= USART2::Enable::TX_PIN;
-	usart2->CTRL_REG |= USART2::Enable::RX_PIN;
+	// enable TX and RX
+	*USART2_CR1 |= (1 << 3);
+	*USART2_CR1 |= (1 << 2);
 
 	// check for reset command from host
-	if(RDR_NOT_EMPTY()){
-		if((uint8_t)usart2->DATA_REG == 0x80) hardware_reset();
+	if(*USART2_SR & (1 << 5)){
+		if((uint8_t)*USART2_DR == 0x80) hardware_reset();
 	}
 
 	// send 0x7F until host responds with 0x79
@@ -55,8 +58,8 @@ void start_transmission(){
 	while(1){
 		uart_send_byte(0x7F);
 		delay();
-		if(RDR_NOT_EMPTY()){
-			if((uint8_t)usart2->DATA_REG == 0x79) break;
+		if(*USART2_SR & (1 << 5)){
+			if((uint8_t)*USART2_DR == 0x79) break;
 		}
 		if(attempts++ > 1000) app_jump();
 	}
@@ -68,7 +71,7 @@ void start_recieve(){
 	uint32_t len = 0;
 	for(int i{}; i < 4; i++){
 		read_reg_empty_check();
-		len |= (usart2->DATA_REG << (i * 8));
+		len |= (*USART2_DR << (i * 8));
 	}
 
 	uart_send_string("MCU: erasing flash\n");

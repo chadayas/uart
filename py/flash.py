@@ -75,7 +75,7 @@ def write_serial():
     read_serial()
 
 def main():
-    send_reset_byte() 
+   # send_reset_byte() 
     serial_handshake()
     write_serial()
     ser.close()

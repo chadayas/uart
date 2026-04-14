@@ -4,14 +4,14 @@ CXX = arm-none-eabi-g++
 LD = arm-none-eabi-ld
 OBJCOPY = arm-none-eabi-objcopy
 
-GCC_FLAGS = -nostdlib -mcpu=cortex-m4 -mthumb -fno-exceptions -fno-rtti -O1 
-C_FLAGS = -nostdlib -mcpu=cortex-m4 -mthumb -O1
+GCC_FLAGS = -nostdlib -mcpu=cortex-m4 -mthumb -fno-exceptions -fno-rtti -O1 -Wall -Wextra -pedantic 
+C_FLAGS = -nostdlib -mcpu=cortex-m4 -mthumb -O1 -Wall -Wextra -pedantic
 DEBUG_FLAGS = -nostdlib -mcpu=cortex-m4 -mthumb -fno-exceptions -fno-rtti -O0 -g
 
 
 SRC      = bootloader/main.cpp
 FLASH_SRC = bootloader/flash.cpp
-USART_SRC = bootloader/usart.cpp
+USART_SRC = usart2.cpp
 STUB     = inc/stub.c
 STARTUP  = inc/startup.s
 LINK_SRC = inc/main.ld
