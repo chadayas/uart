@@ -2,3 +2,5 @@ test.bin
 test.elf
 *.bin
 test
+opts.txt
+usart2.cpp
