@@ -130,9 +130,33 @@ static_assert(offsetof(FLASH::Register, KEY_REG)    == 0x04, "KEY_REG at wrong o
 static_assert(offsetof(FLASH::Register, STATUS_REG) == 0x0C, "STATUS_REG at wrong offset");
 static_assert(offsetof(FLASH::Register, CTRL_REG)   == 0x10, "CTRL_REG at wrong offset");
 
+namespace AIRCR{
+   constexpr uint32_t REG_KEY { 0x05FAU }; 
+   constexpr uint32_t BASE { 0xE000ED0CU };
+    
+   struct Register {volatile uint32_t BASE; }; 
+   
+   namespace Enable{
+      constexpr uint32_t SYS_RESET = (REG_KEY << 16U) | // write key onto upper part of register
+                              (7U << 8U) |// leave priority group unchanged
+                              (1U << 2U); // set SYSRESETREQ bit
+      }    
+   
+   namespace Run{
+      inline void _DSB(){
+        asm volatile("dsb 0xf":::"memory"); // data sync buffer, post a wait until key is written
+      }
+   }
+}
+
+static_assert(offsetof(AIRCR::Register, BASE)    == 0x00, "AIRCR at wrong offset");
+
 inline RCC::Register*    rcc()    { return reinterpret_cast<RCC::Register*>(RCC::BASE);    }
 inline GPIOA::Register*  gpioa()  { return reinterpret_cast<GPIOA::Register*>(GPIOA::BASE);  }
 inline USART2::Register* usart2() { return reinterpret_cast<USART2::Register*>(USART2::BASE); }
 inline FLASH::Register*  flash()  { return reinterpret_cast<FLASH::Register*>(FLASH::BASE);  }
+inline AIRCR::Register* aircr(){ return reinterpret_cast<AIRCR::Register*>(AIRCR::BASE);  }
+
+
 
 #endif

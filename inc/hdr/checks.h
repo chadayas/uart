@@ -1,5 +1,5 @@
-#define REG_KEY 0x05FAU
 #include "regreg.h"
+
 // sequentially reading of status register 
 // and data register to clear any uart error flags
 // (ORE, FE, and etc)
@@ -48,14 +48,13 @@ inline void flash_bsy_wait(){
  // button on stm32 programmatically
  
 inline void hardware_reset(){
-    asm volatile("dsb 0xf":::"memory"); // data sync buffer, post a wait until key is written
+   using namespace AIRCR;  
+    Run::_DSB(); 
+
+    aircr()->BASE = Enable::SYS_RESET;
  
-    constexpr uint32_t mask = (REG_KEY << 16U) | // write key onto upper part of register
-                              (7U << 8U) |// leave priority group unchanged
-                              (1U << 2U); // set SYSRESETREQ bit
-    *AIRCR = mask;
- 
-    asm volatile("dsb 0xf":::"memory");
+    Run::_DSB(); 
+    
     while(1); // spin program so no other code is ran
 }
  

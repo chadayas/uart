@@ -1,5 +1,4 @@
 #include "../inc/hdr/flash.h"
-#include "../inc/hdr/reg.h"
 #include "../inc/hdr/checks.h"
 #include "../inc/hdr/uart.h"
 
