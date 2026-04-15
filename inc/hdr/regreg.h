@@ -1,3 +1,6 @@
+#ifndef GUARD_REG_H
+#define GUARD_REG_H
+
 #include<cstddef>
 
 namespace RCC {
@@ -84,8 +87,8 @@ static_assert(offsetof(USART2::Register, CTRL_REG)     == 0x0C, "CTRL_REG at wro
 namespace FLASH{
    constexpr uint32_t BASE { 0x40023C00 };
 
-   constexpr uint32_t KEY1 = 0x45670123;
-   constexpr uint32_t KEY2 = 0xCDEF89AB;
+   constexpr uint32_t KEY1 = 0x45670123U;
+   constexpr uint32_t KEY2 = 0xCDEF89ABU;
 
    struct Register{
       uint32_t NOT_USING1[1];        // ACR     offset 0x00
@@ -98,15 +101,22 @@ namespace FLASH{
    namespace Enable{
       constexpr uint32_t SECTOR_ERASE { (1U << 1U) };
       constexpr uint32_t ERASE        { (1U << 16U) };
+      constexpr uint32_t PROGRAMMING { (1U << 0U) };
    }
    namespace Clear{
       constexpr uint32_t SNB_BITS { ~(0xFU << 3U) };
       constexpr uint32_t SER_BIT  { ~(1U << 1U) };
+      constexpr uint32_t PROGRAMMING { ~(1U << 0U) };
    }
    namespace Set{
       constexpr uint32_t sector_2 { (1U << 4U) };
       constexpr uint32_t sector_3 { (1U << 4U) | (1U << 3U) };
       constexpr uint32_t sector_4 { (1U << 5U) };
+      constexpr uint32_t sector_5 { (1U << 5U) | (1U << 3U) };
+      constexpr uint32_t sector_6 { (1U << 5U) | (1U << 4U) };
+      constexpr uint32_t sector_7 { (1U << 5U) | (1U << 4U) | (1U << 3U) };
+      
+      constexpr uint32_t PSIZE {~(3U << 8U)}; 
    }
    namespace Status{
       inline uint32_t FLASH_BUSY(){
@@ -124,3 +134,5 @@ inline RCC::Register*    rcc()    { return reinterpret_cast<RCC::Register*>(RCC:
 inline GPIOA::Register*  gpioa()  { return reinterpret_cast<GPIOA::Register*>(GPIOA::BASE);  }
 inline USART2::Register* usart2() { return reinterpret_cast<USART2::Register*>(USART2::BASE); }
 inline FLASH::Register*  flash()  { return reinterpret_cast<FLASH::Register*>(FLASH::BASE);  }
+
+#endif

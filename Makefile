@@ -11,7 +11,7 @@ DEBUG_FLAGS = -nostdlib -mcpu=cortex-m4 -mthumb -fno-exceptions -fno-rtti -O0 -g
 
 SRC      = bootloader/main.cpp
 FLASH_SRC = bootloader/flash.cpp
-USART_SRC = usart2.cpp
+USART_SRC = bootloader/usart.cpp
 STUB     = inc/stub.c
 STARTUP  = inc/startup.s
 LINK_SRC = inc/main.ld
