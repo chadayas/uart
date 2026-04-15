@@ -56,7 +56,6 @@ def serial_handshake():
 def write_serial():
     # send firmware size
     time.sleep(0.1) 
-    print("HOST: sending len of binary") 
     ser.write(BIN_LEN.to_bytes(4, "little"))
 
     read_serial() 

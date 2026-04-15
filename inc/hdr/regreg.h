@@ -60,7 +60,7 @@ namespace USART2 {
    }
 
    namespace Set{
-      constexpr uint32_t BAUD_RATE = (2U << 4U) | 3U; // 115200 at 16MHz HSI
+      constexpr uint32_t BAUD_RATE = (2U << 4U) | 3U; // 460800 at 16MHz HSI
    }
 
    namespace Status{
