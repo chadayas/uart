@@ -4,8 +4,8 @@ CXX = arm-none-eabi-g++
 LD = arm-none-eabi-ld
 OBJCOPY = arm-none-eabi-objcopy
 
-GCC_FLAGS = -nostdlib -mcpu=cortex-m4 -mthumb -fno-exceptions -fno-rtti -O1 -Wall -Wextra -pedantic 
-C_FLAGS = -nostdlib -mcpu=cortex-m4 -mthumb -O1 -Wall -Wextra -pedantic
+GCC_FLAGS = -nostdlib -mcpu=cortex-m4 -mthumb -fno-exceptions -fno-rtti -O1 -Wall -Wextra -pedantic -Wno-unused-parameter -Wno-unused-value
+C_FLAGS = -nostdlib -mcpu=cortex-m4 -mthumb -O1 -Wall -Wextra -pedantic -Wno-unused-parameter -Wno-unused-value
 DEBUG_FLAGS = -nostdlib -mcpu=cortex-m4 -mthumb -fno-exceptions -fno-rtti -O0 -g
 
 

@@ -20,10 +20,14 @@ ser = serial.Serial(port=PORT,
                     timeout=5.0,
                     xonxoff=False,
                     rtscts=False,
-                    dsrdtr=False)
+                    dsrdtr=True)
 ser.reset_input_buffer()
 
 sio = io.TextIOWrapper(io.BufferedRWPair(ser, ser))
+
+def init_hw_reset():
+    print("HOST: starting hardware reset to 0x80000000...")
+    ser.dtr = True
 
 def read_serial():
     # read serial for string sends from mcu 
@@ -33,7 +37,6 @@ def read_serial():
 
 def send_reset_byte():
     rst_byte = b'\x80' 
-    print("HOST: starting hardware reset to 0x80000000...")
     ser.write(rst_byte)
 
 
@@ -49,13 +52,13 @@ def serial_handshake():
         if b == b'\x7f':
             ser.write(b'\x79')
             print("HOST: handshake complete")
-            time.sleep(0.1) 
+            time.sleep(0.6) 
             ser.reset_input_buffer() 
             break
 
 def write_serial():
     # send firmware size
-    time.sleep(0.1) 
+    time.sleep(0.6) 
     ser.write(BIN_LEN.to_bytes(4, "little"))
 
     read_serial() 
@@ -76,6 +79,7 @@ def write_serial():
     read_serial()
 
 def main():
+    init_hw_reset() 
     serial_handshake()
     write_serial()
     ser.close()
