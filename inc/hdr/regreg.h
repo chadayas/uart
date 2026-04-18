@@ -151,6 +151,16 @@ namespace AIRCR{
 
 static_assert(offsetof(AIRCR::Register, BASE)    == 0x00, "AIRCR at wrong offset");
 
+
+namespace NVIC_ISERn{
+   
+   struct Reg{volatile uint32_t BASE;};
+   
+   namespace Enable{
+      constexpr uint32_t USART_intrpt { };
+   }
+}
+
 inline RCC::Register*    rcc()    { return reinterpret_cast<RCC::Register*>(RCC::BASE);    }
 inline GPIOA::Register*  gpioa()  { return reinterpret_cast<GPIOA::Register*>(GPIOA::BASE);  }
 inline USART2::Register* usart2() { return reinterpret_cast<USART2::Register*>(USART2::BASE); }
