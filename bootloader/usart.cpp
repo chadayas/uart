@@ -2,6 +2,11 @@
 #include "../inc/hdr/checks.h"
 #include "../inc/hdr/uart.h"
 
+
+extern "C" void Usart2IQR_handler(){
+     if ((uint8_t )usart2()->DATA_REG == 0x80) hardware_reset();  
+}
+
 void uart_send_string(const char* msg){
 	while(*msg){
 		transmit_reg_empty_check();

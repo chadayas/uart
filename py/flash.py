@@ -79,7 +79,7 @@ def write_serial():
     read_serial()
 
 def main():
-    init_hw_reset() 
+    send_reset_byte() 
     serial_handshake()
     write_serial()
     ser.close()

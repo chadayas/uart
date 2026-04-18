@@ -5,6 +5,10 @@
 .section .isr_vector, "a", %progbits
 .word _estack
 .word Reset_Handler
+.rept 52
+.word 0 
+.endr
+.word UsartIQR_handler
 
 .text
 .global Reset_Handler
