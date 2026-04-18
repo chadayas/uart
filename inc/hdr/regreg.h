@@ -14,7 +14,7 @@ namespace RCC {
    };
 
    namespace Enable{
-      constexpr uint32_t GPIOA { (1U << 0) };
+      constexpr uint32_t GPIOA { (1U << 0U) };
       constexpr uint32_t USART2 { (1U << 17U) };
    }
 }
@@ -57,6 +57,8 @@ namespace USART2 {
       constexpr uint32_t USART  { (1U << 13U) };
       constexpr uint32_t TX_PIN { (1U << 3U) };
       constexpr uint32_t RX_PIN { (1U << 2U) };
+      constexpr uint32_t RXNE_Intrpt{ (1U << 5U) };
+       
    }
 
    namespace Set{
@@ -152,12 +154,18 @@ namespace AIRCR{
 static_assert(offsetof(AIRCR::Register, BASE)    == 0x00, "AIRCR at wrong offset");
 
 
-namespace NVIC_ISERn{
+namespace NVIC_ISER{ // interrupt set enable registers
    
-   struct Reg{volatile uint32_t BASE;};
+   constexpr uint32_t BASE { 0xE000E100U };
+
+   struct Register{
+      uint32_t NOT_USING1[1];        
+      volatile uint32_t ISER1;
+   };
    
    namespace Enable{
-      constexpr uint32_t USART_intrpt { };
+      constexpr uint32_t USART2_Intrpt { 1U << 6U };
+   
    }
 }
 
@@ -166,6 +174,8 @@ inline GPIOA::Register*  gpioa()  { return reinterpret_cast<GPIOA::Register*>(GP
 inline USART2::Register* usart2() { return reinterpret_cast<USART2::Register*>(USART2::BASE); }
 inline FLASH::Register*  flash()  { return reinterpret_cast<FLASH::Register*>(FLASH::BASE);  }
 inline AIRCR::Register* aircr(){ return reinterpret_cast<AIRCR::Register*>(AIRCR::BASE);  }
+inline NVIC_ISER::Register* iser(){ return reinterpret_cast<NVIC_ISER::Register*>(
+                                                               NVIC_ISER::BASE);  }
 
 
 

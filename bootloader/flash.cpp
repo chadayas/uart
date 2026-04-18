@@ -103,10 +103,14 @@ void flash_write(uint32_t dest, uint32_t len){
 }
 
 void app_jump(){
-	uint32_t app_pc = *reinterpret_cast<volatile uint32_t*>(0x08008004);
+   usart2()->CTRL_REG |= USART2::Enable::RXNE_Intrpt;
+   iser()->ISER1 |= NVIC_ISER::Enable::USART2_Intrpt;
+   
+   uint32_t app_pc = *reinterpret_cast<volatile uint32_t*>(0x08008004);
 	uint32_t app_sp = *reinterpret_cast<volatile uint32_t*>(0x08008000);
 	
-	__asm volatile(
+	
+   asm volatile(
 			"mov sp, %0\n"
 			"bx %1\n"
 			: : "r" (app_sp), "r" (app_pc)

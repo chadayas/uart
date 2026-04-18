@@ -57,4 +57,5 @@ inline void hardware_reset(){
     
     while(1); // spin program so no other code is ran
 }
- 
+
+void Usart2_IQR();
