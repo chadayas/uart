@@ -171,6 +171,35 @@ namespace NVIC_ISER{ // interrupt set enable registers
    }
 }
 
+static_assert(offsetof(NVIC_ISER::Register, ISER1)    == 0x04, "ISER at wrong offset");
+
+
+namespace SYSTICK { 
+   constexpr uint32_t BASE {0xE000E010 };
+
+   struct Register{
+      volatile uint32_t CTRL_REG; 
+      volatile uint32_t RELOAD_REG;
+      volatile uint32_t CURRVAL_REG;
+      volatile uint32_t CALIB_REG;
+   };
+   
+   namespace Enable{
+      constexpr uint32_t TIMER {1U << 0U};
+   
+   }
+}
+
+static_assert(offsetof(SYSTICK::Register, CTRL_REG)    == 0x00, "systick CTRL_REG at wrong offset");
+static_assert(offsetof(SYSTICK::Register, RELOAD_REG)    == 0x04, 
+                                       "systick RELOAD_REG at wrong offset");
+
+static_assert(offsetof(SYSTICK::Register, CURRVAL_REG)    == 0x08, 
+                                     "systick CURRVAL_REG at wrong offset");
+static_assert(offsetof(SYSTICK::Register, CALIB_REG)    == 0x0c,
+                                     "systick CALIB_REG at wrong offset");
+
+
 inline RCC::Register*    rcc()    { return reinterpret_cast<RCC::Register*>(RCC::BASE);    }
 inline GPIOA::Register*  gpioa()  { return reinterpret_cast<GPIOA::Register*>(GPIOA::BASE);  }
 inline USART2::Register* usart2() { return reinterpret_cast<USART2::Register*>(USART2::BASE); }
@@ -178,7 +207,7 @@ inline FLASH::Register*  flash()  { return reinterpret_cast<FLASH::Register*>(FL
 inline AIRCR::Register* aircr(){ return reinterpret_cast<AIRCR::Register*>(AIRCR::BASE);  }
 inline NVIC_ISER::Register* iser(){ return reinterpret_cast<NVIC_ISER::Register*>(
                                                                NVIC_ISER::BASE);  }
-
+inline SYSTICK::Register* systick(){return reinterpret_cast<SYSTICK::Register*>(SYSTICK::BASE); }
 
 
 #endif

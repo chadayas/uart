@@ -19,12 +19,12 @@
 
 .type Reset_Handler, %function
 .type Usart2IQR_handler, %function
-
+/*ldr r0, =_estack
+mov sp, r0*/
 
 Reset_Handler:
-    ldr r0, =_estack
-    mov sp, r0
-
+    ldr sp, =_estack
+    
     bl main
 1:  b 1b
 .size Reset_Handler, .-Reset_Handler
