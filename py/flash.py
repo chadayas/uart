@@ -4,7 +4,7 @@ import sys
 import time
 import io
 
-BAUD_RATE = 460800 
+BAUD_RATE = 115200 
 PORT = sys.argv[1]
 BINARY = sys.argv[2]
 
@@ -25,9 +25,6 @@ ser.reset_input_buffer()
 
 sio = io.TextIOWrapper(io.BufferedRWPair(ser, ser))
 
-def init_hw_reset():
-    print("HOST: starting hardware reset to 0x80000000...")
-    ser.dtr = True
 
 def read_serial():
     # read serial for string sends from mcu 
@@ -37,6 +34,7 @@ def read_serial():
 
 def send_reset_byte():
     rst_byte = b'\x80' 
+    print("HOST: prompting hardware reset") 
     ser.write(rst_byte)
 
 
