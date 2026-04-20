@@ -4,15 +4,17 @@
 // and data register to clear any uart error flags
 // (ORE, FE, and etc)
 inline void clear_uart_err_flags(){
-   volatile uint32_t sr = usart2()->STATUS_REG;
-   volatile uint32_t dr = usart2()->DATA_REG;
-   // use variables so we dont get warnings 
-   (void *)(sr); (void *)(dr);
+[[maybe_unused]] volatile uint32_t sr = usart2()->STATUS_REG;
+[[maybe_unused]] volatile uint32_t dr = usart2()->DATA_REG;
 }
 
 
 // forward declarations needed for handshake
 void uart_send_string(const char* msg);
+
+
+void init_systick();
+
 
 // functions for register checks, bits of the mmr help tell
 // us the status of what is inside of the register

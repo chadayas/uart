@@ -2,10 +2,23 @@
 #include "../inc/hdr/checks.h"
 #include "../inc/hdr/uart.h"
 
+volatile uint32_t ticks{};
 
 extern "C" void Usart2IQR_handler(){
      if ((uint8_t )usart2()->DATA_REG == 0x80) hardware_reset();  
 }
+ 
+extern "C" void SysTick_handler(){
+   ticks++;
+}
+
+void init_systick(){
+   using namespace SYSTICK; 
+   systick()->CTRL_REG |= ( Set::TIMER | Set::TICKINT | Set::CLKSRC );
+   systick()->RELOAD_REG |= RVR; 
+   systick()->CURRVAL_REG = 0U; 
+}
+
 
 void uart_send_string(const char* msg){
 	while(*msg){

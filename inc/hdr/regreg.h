@@ -176,7 +176,8 @@ static_assert(offsetof(NVIC_ISER::Register, ISER1)    == 0x04, "ISER at wrong of
 
 namespace SYSTICK { 
    constexpr uint32_t BASE {0xE000E010 };
-
+   constexpr uint32_t RVR {16000}; // set measure of time at 1 \mus
+   
    struct Register{
       volatile uint32_t CTRL_REG; 
       volatile uint32_t RELOAD_REG;
@@ -184,18 +185,22 @@ namespace SYSTICK {
       volatile uint32_t CALIB_REG;
    };
    
-   namespace Enable{
+   namespace Set{
       constexpr uint32_t TIMER {1U << 0U};
-   
+      constexpr uint32_t TICKINT {1U << 1U};
+      constexpr uint32_t CLKSRC {1U << 2U};
+       
    }
 }
 
 static_assert(offsetof(SYSTICK::Register, CTRL_REG)    == 0x00, "systick CTRL_REG at wrong offset");
+
 static_assert(offsetof(SYSTICK::Register, RELOAD_REG)    == 0x04, 
                                        "systick RELOAD_REG at wrong offset");
 
 static_assert(offsetof(SYSTICK::Register, CURRVAL_REG)    == 0x08, 
                                      "systick CURRVAL_REG at wrong offset");
+
 static_assert(offsetof(SYSTICK::Register, CALIB_REG)    == 0x0c,
                                      "systick CALIB_REG at wrong offset");
 
