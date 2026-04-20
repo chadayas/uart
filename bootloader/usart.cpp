@@ -19,6 +19,10 @@ void init_systick(){
    systick()->CURRVAL_REG = 0U; 
 }
 
+void systick_delay(uint32_t delay_ticks){
+   ticks{};
+   while(ticks < delay_ticks); 
+}
 
 void uart_send_string(const char* msg){
 	while(*msg){
@@ -54,17 +58,14 @@ void start_transmission(){
 
 	usart2()->CTRL_REG |= USART2::Enable::TX_PIN;
 	usart2()->CTRL_REG |= USART2::Enable::RX_PIN;
-
-	// check for reset command from host
-	/*if(RDR_NOT_EMPTY()){
-		if((uint8_t)usart2()->DATA_REG == 0x80) hardware_reset();
-	}*/
-
-	// send 0x7F until host responds with 0x79
+   
+   init_systick(); 
+	
+   // send 0x7F until host responds with 0x79
 	uint32_t attempts = 0;
 	while(1){
 		uart_send_byte(0x7F);
-		delay();
+		systick_delay();
 		if(RDR_NOT_EMPTY()){
 			if((uint8_t)usart2()->DATA_REG == 0x79) break;
 		}
