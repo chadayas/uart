@@ -6,7 +6,6 @@ A bare metal UART bootloader for the STM32F446RE Nucleo board written in C++ wit
 
 ## Demo
 
-> *(gif goes here)*
 
 ---
 
