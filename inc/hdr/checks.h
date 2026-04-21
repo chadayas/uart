@@ -15,7 +15,7 @@ void uart_send_string(const char* msg);
 
 void init_systick();
 
-void systick_delay();
+void systick_delay(uint32_t delay_ticks);
 
 // functions for register checks, bits of the mmr help tell
 // us the status of what is inside of the register

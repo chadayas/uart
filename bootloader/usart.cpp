@@ -20,7 +20,7 @@ void init_systick(){
 }
 
 void systick_delay(uint32_t delay_ticks){
-   ticks{};
+   ticks = 0;
    while(ticks < delay_ticks); 
 }
 
@@ -65,7 +65,7 @@ void start_transmission(){
 	uint32_t attempts = 0;
 	while(1){
 		uart_send_byte(0x7F);
-		systick_delay();
+		systick_delay(100);
 		if(RDR_NOT_EMPTY()){
 			if((uint8_t)usart2()->DATA_REG == 0x79) break;
 		}
