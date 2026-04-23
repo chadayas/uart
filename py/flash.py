@@ -4,7 +4,7 @@ import sys
 import time
 import io
 
-BAUD_RATE = 115200 
+BAUD_RATE = 230400
 PORT = sys.argv[1]
 BINARY = sys.argv[2]
 
@@ -50,13 +50,18 @@ def serial_handshake():
         if b == b'\x7f':
             ser.write(b'\x79')
             print("HOST: handshake complete")
-            time.sleep(0.6) 
-            ser.reset_input_buffer() 
+            ser.reset_input_buffer()
             break
 
+def wait_ready():
+    b = ser.read(1)
+    if b != b'\x7e':
+        raise RuntimeError(f"expected ready 0x7E, got {b}")
+    print("HOST: MCU ready, sending length")
+
 def write_serial():
-    # send firmware size
-    time.sleep(0.6) 
+    # wait for MCU ready signal before sending length
+    wait_ready()
     ser.write(BIN_LEN.to_bytes(4, "little"))
 
     read_serial() 
@@ -73,7 +78,7 @@ def write_serial():
         wait_ack()
         total += len(chunk)
         print(f"HOST: {total}/{BIN_LEN} bytes written", end='\r', flush=True)
-        time.sleep(0.01)
+        time.sleep(0.005)
     read_serial()
 
 def main():

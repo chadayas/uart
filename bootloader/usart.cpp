@@ -65,7 +65,7 @@ void start_transmission(){
 	uint32_t attempts = 0;
 	while(1){
 		uart_send_byte(0x7F);
-		systick_delay(100);
+		systick_delay(2000);
 		if(RDR_NOT_EMPTY()){
 			if((uint8_t)usart2()->DATA_REG == 0x79) break;
 		}
@@ -75,6 +75,13 @@ void start_transmission(){
 }
 
 void start_recieve(){
+	// drain any stale bytes in RX buffer before signaling ready
+	while(USART2::Status::RDR_NOT_EMPTY())
+		(void)usart2()->DATA_REG;
+
+	// signal host we are ready to receive length bytes
+	uart_send_byte(0x7E);
+
 	// receive firmware size (4 bytes, little endian)
 	uint32_t len = 0;
    for(int i{}; i < 4; i++){
