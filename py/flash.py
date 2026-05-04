@@ -4,7 +4,7 @@ import sys
 import time
 import io
 
-BAUD_RATE = 230400
+BAUD_RATE = 115200
 PORT = sys.argv[1]
 BINARY = sys.argv[2]
 
